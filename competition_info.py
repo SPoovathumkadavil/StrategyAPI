@@ -110,7 +110,7 @@ print("\n")
 competition_events = []
 for i in events:
     if i['city'] in competition_cities:
-        competition_events.append(i)
+        competition_events.append(i['key'])
 
 for i in competition_events:
     print(i)
