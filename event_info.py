@@ -45,24 +45,27 @@ peoria_teams = [
 8096, 
 8122]
 
-pt_info = []
-for i in peoria_teams:
-    pt_info.append(tba.team(i))
+#pt_info = []
+#for i in peoria_teams:
+#    pt_info.append(tba.team(i))
+
+#print(pt_info)
 
 #print(tba.events(2021))
-x = tba.event_rankings('2019mosl')
+def get_event_info(event_key):
+    x = tba.event_rankings(event_key)
 
-fieldnames = ['dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders', 'team_key']
+    fieldnames = ['dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders', 'team_key']
 
-with open('output.csv', 'w', newline="") as output:
-    writer = csv.writer(output)
-    vals = [['dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders', 'team_key']]
-    for i in x["rankings"]:
-        t = []
-        for n in i:
-            val = i[n]
-            t.append(val)
-        vals.append(t)
-    writer.writerows(vals)
+    with open('output.csv', 'w', newline="") as output:
+        writer = csv.writer(output)
+        vals = [['dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders', 'team_key']]
+        for i in x["rankings"]:
+            t = []
+            for n in i:
+                val = i[n]
+                t.append(val)
+            vals.append(t)
+        writer.writerows(vals)
 
-output.close()
+    output.close()
