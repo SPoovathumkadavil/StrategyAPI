@@ -11,7 +11,7 @@ def get_event_info(kl):
         x = tba.event_rankings(kl[0])['rankings']
     except KeyError:
         return False
-    keys = x[len(x)-1].keys()
+    keys = x[0].keys()
 
     with open('event_info_output.csv', 'w', newline="") as output:
         writer = csv.writer(output)

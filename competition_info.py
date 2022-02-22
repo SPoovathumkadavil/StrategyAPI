@@ -84,64 +84,49 @@ competition_teams = [
 ]
 competition_teams.sort()
 
+
 def get_competition_info(year):
     tba = t.TBA('import tbapy')
     tba = t.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJS')
 
     tmp_events = []
-    for i in competition_teams:
-        tmp_events.append(tba.team_events(i, year))
+
+    for team in competition_teams:
+        events = tba.team_events(team, year)
+        for event in events:
+            tmp_events.append(event['key'])
 
     events = []
-    for i in tmp_events:
-        for j in i:
-            keeper = []
-            if j['key'] not in events:
-                keeper.append(j['key'])
-                keeper.append(j['name'])
-            events.append(keeper)
+    for event in tmp_events:
+        if event not in events:
+            events.append(event)
 
-    # For each competition event, iterate once
-    with open('competition_info_output.csv', 'w', newline="") as output:
-        writer = csv.writer(output)
+    competition_event_results = []
+    for event in events:
+        event_ranking = tba.event_rankings(event)['rankings']
 
-        vals = [
-            ['competition', 'dq', 'extra_stats', 'matches_played', 'qualifying_average', 'rank', 'record', 'sort_orders', 'team_key']
-        ]
+        if event_ranking is not None:
+            for team in event_ranking:
+                tmp_holder = [tba.event(event)['name']]
 
-        # For each competition event iterate once
-        for i in events:
-            er = event_info.get_event_info(i)
-            if not er:
-                continue
+                if int(team['team_key'][3:]) in competition_teams:
+                    tmp_holder.append(team)
+                    competition_event_results.append(tmp_holder)
 
-            # For each team, iterate once
-            times = 0
-            for j in er:
-                if times == 0:
-                    times += 1
-                    continue
-                CurrentKey = j[8]
+        with open('competition_info_output.csv', 'w', newline='') as output:
+            writer = csv.writer(output)
 
-                num = ""
-                for e in CurrentKey:
-                    if e == 'f':
-                        continue
-                    elif e == 'r':
-                        continue
-                    elif e == 'c':
-                        continue
-                    else:
-                        num += e
-                num = int(num)
+            vals = [
+                ['competition', 'dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders',
+                 'team_key']]
 
-                for team in competition_teams:
-                    if num < team:
-                        break
-                    TeamKey = "frc" + str(team)
-                    if CurrentKey == TeamKey:
-                        vals.append(j)
-        writer.writerows(vals)
+            for i in competition_event_results:
+                tmp_holder = [i[0]]
+                keys = i[1].keys()
+                for j in keys:
+                    tmp_holder.append(i[1][j])
+                vals.append(tmp_holder)
 
-    output.close()
-    return vals
+            writer.writerows(vals)
+        return vals
+

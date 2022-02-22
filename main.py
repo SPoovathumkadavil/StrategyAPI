@@ -1,12 +1,14 @@
 import competition_info
 import event_info
+import team_match_info
 import tbapy as t
 
 tba = t.TBA('import tbapy')
 tba = t.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJS')
 
 actions = ['update event info(get team information for specific events)',
-           'update information for teams we will compete in the 2022 season(regional teams)']
+           'update information for teams we will compete in the 2022 season(regional teams)',
+           'get team match information from a specific year.(WARNING too much info)']
 
 print("Hello, Welcome to the FRC Team 4500 strategy API application!")
 print("To begin, enter an action chosen from the following list. You may select it using the number on the left of "
@@ -70,13 +72,25 @@ while True:
         if not out:
             continue
 
-        for i in out:
-            print(i)
-
         print("\n")
 
-        print("the competition_info_output file has been updated with the information above. enter 0 or quit in "
+        print("the competition_info_output file has been updated with the information. enter 0 or quit in "
               "'Action: ' to quit.")
+
+    elif a == '3':
+        print("please enter the team you would like to monitor.")
+        team = input("Team: ")
+        print("please enter the year of the season.")
+        year = input("Year: ")
+
+        print("\n")
+        print("please wait...")
+        print("\n")
+
+        out = team_match_info.team_match_info_gatherer(team=team, year=year)
+
+        print("the team_match_info_output file has been updated with the information. enter 0 or quit in 'Action: ' "
+              "to quit")
 
     elif a == '0' or a == 'quit':
         break
