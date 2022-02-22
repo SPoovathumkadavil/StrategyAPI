@@ -94,10 +94,12 @@ def get_event_ranking(event_key='2019mosl', f=False):
 
     # get event rankings using the event key eg. '2019mosl'
     # returns list of dictionaries with teams sorted by ranking
-    rankings = tba.event_rankings(event_key)['rankings']
-
     # Collect keys from dictionary
-    keys = rankings[0].keys()
+    try:
+        rankings = tba.event_rankings(event_key)['rankings']
+        keys = rankings[0].keys()
+    except:
+        return
 
     vals = [
         ['competition', 'dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders',
@@ -148,9 +150,47 @@ def get_competition_ranking(year=2019):
             if t['key'] not in events:
                 events.append(t['key'])
 
+    vals = [
+        ['competition', 'dq', 'extra_stats', 'matches_played', 'qual_average', 'rank', 'record', 'sort_orders',
+         'team_key']
+    ]
+
     # Go through all event rankings and get info for competition teams
     for event in events:
         # Get rank data for each event
         rank_data = get_event_ranking(event, True)
 
+        if rank_data is None:
+            continue
+
+        # Iterate over rank data to find comp. teams
+        for team in rank_data:
+            tmp_holder = [tba.event(event)['name']]
+
+            # Team key = team num
+            team_key = team[8][3:]
+            if team_key == 'm_key':
+                continue
+
+            # convert key to num
+            team_key = int(team_key)
+
+            # If the team_key is one of our competition teams, then append it to
+            if team_key not in COMPETITION_TEAMS:
+                continue
+            else:
+                things = team[1:]
+                for thing in things:
+                    tmp_holder.append(thing)
+
+            # Append the holder to the values
+            vals.append(tmp_holder)
+
+        # Write to csv file
+        with open('output/competition_info_output.csv', 'w', newline='') as output:
+            writer = csv.writer(output)
+            writer.writerows(vals)
+
+        # Return lines
+        return vals
 
