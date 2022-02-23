@@ -196,6 +196,7 @@ def get_competition_ranking(year=2019):
 
 
 # Get team matches in a season or in a specific event
+# Set simple to false in order to get more data
 def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
     if simple:
         # if there is no event input
@@ -440,6 +441,7 @@ def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
 
 
 # Get event matches in a specific event
+# Set simple to false in order to get more data
 def get_event_matches_info(event='2019mosl', simple=True):
     matches = tba.event_matches(event=event, simple=simple)
     baseMatch = matches[0]
@@ -504,11 +506,11 @@ def get_event_matches_info(event='2019mosl', simple=True):
         # Append tmp_holder to vals
         vals.append(tmp_holder)
 
-    with open('output/team_matches_info_output.csv', 'w', newline='') as output:
+    with open('output/event_matches_info_output.csv', 'w', newline='') as output:
         writer = csv.writer(output)
         writer.writerows(vals)
 
     # Return lines
     return vals
 
-get_event_matches_info()
+get_event_matches_info(simple=False)
