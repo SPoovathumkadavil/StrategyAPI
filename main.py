@@ -10,9 +10,9 @@ the pages are as follows:
 all of these will be exported to csv (or excel) files or possibly viewed within the application
 
 Needs:
- - Get event,team, and match info and export it to a csv
+ - Get event, team, and match info and export it to a csv
  - Simple and functional interface
- - Exported as a .exe (for familliar ease of use)
+ - Exported as a .exe (for familiar ease of use)
 
 Wants:
  - excel files
@@ -20,6 +20,7 @@ Wants:
  - advanced options
  - viewing information from the application
  - searching for information from the application
+ - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
 '''
 
 from TBAFunctions import *
@@ -31,7 +32,7 @@ root.title("StrategyAPI")
 root.geometry("400x400")
 
 #create canvas1
-canvas1 = Canvas(root,width=400,height=400)
+canvas1 = Canvas(root, width=400, height=400)
 canvas1.pack()
 
 # intro text for init tab
