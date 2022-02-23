@@ -187,10 +187,12 @@ def get_competition_ranking(year=2019):
             vals.append(tmp_holder)
 
         # Write to csv file
-        with open('output/competition_info_output.csv', 'w', newline='') as output:
-            writer = csv.writer(output)
-            writer.writerows(vals)
+    with open('output/competition_info_output.csv', 'w', newline='') as output:
+        writer = csv.writer(output)
+        writer.writerows(vals)
 
-        # Return lines
-        return vals
+    # Return lines
+    return vals
+
+
 
