@@ -26,30 +26,148 @@ Wants:
 from TBAFunctions import *
 from tkinter import *
 
-#creates root
-root = Tk()
-root.title("StrategyAPI")
-root.geometry("400x400")
+class StratUI(Tk):
 
-#create canvas1
-canvas1 = Canvas(root, width=400, height=400)
-canvas1.pack()
+    # init app
+    def __init__(self, *args, **kwargs):
+        #init Tk
+        Tk.__init__(self, *args, **kwargs)
 
-# intro text for init tab
-introText = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
-canvas1.create_window(200,100, window = Label(canvas1,text = introText))
+        #create container
+        container = Frame(self)
+        container.pack(
+            side = "top",
+            fill = "both",
+            expand = True
+        )
 
-#Quit button
-canvas1.create_window(350,350,window = Button(canvas1,text = "Quit", bg="red", command = root.destroy))
+        container.grid_rowconfigure(0, weight = 1)
+        container.grid_rowconfigure(1, weight = 1)
+        container.grid_columnconfigure(0, weight = 1)
 
-# get event info
+        # General GUI
+        # TODO: - put this on another frame so im not bound to 3 buttons with "sticky"
+        #page 1 button
+        Button(
+            container,
+            text = "Page1",
+            command = lambda : self.showFrame(Page1)
+        ).grid(
+            row = 0, 
+            column = 0, 
+            sticky = "nw",
+            padx = 10,
+            pady = 10
+        )
+        # page 2 button
+        Button(
+            container,
+            text = "Page2",
+            command = lambda : self.showFrame(Page2)
+        ).grid(
+            row = 0, 
+            column = 0, 
+            sticky = "n",
+            padx = 10,
+            pady = 10
+        )
+        # page 3 button
+        Button(
+            container,
+            text = "Page3",
+            command = lambda : self.showFrame(Page3)
+        ).grid(
+            row = 0, 
+            column = 0, 
+            sticky = "ne",
+            padx = 10,
+            pady = 10
+        )
 
-# get teams
 
-# get specific match info
+        # Tabs
+        self.frames = {}
 
+        for F in (StartPage, Page1, Page2, Page3): #order pages with init page first
+            page = F(container, self)
 
+            self.frames[F] = page
 
+            page.grid(row = 1, column = 0, sticky ="nsew")
+
+            
+        
+        self.showFrame(StartPage)#start page
+    
+    #display current frame
+    def showFrame(self, cont):
+        page = self.frames[cont]
+        page.tkraise()
+
+class StartPage(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        f = Frame(self)
+        f.grid(row = 0, column = 0)
+
+        # intro text for init tab
+        introText = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
+
+        # create label
+        Label(
+            self,
+            text = introText
+        ).grid(row = 0, column = 0)
+
+class Page1(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        f = Frame(self)
+        f.grid(row = 0, column = 0)
+
+        # intro text for init tab
+        page1Text = "yo this is a different page"
+
+        # create label
+        Label(
+            self,
+            text = page1Text
+        ).grid(row = 0, column = 0)
+
+class Page2(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        f = Frame(self)
+        f.grid(row = 0, column = 0)
+
+        # intro text for init tab
+        page1Text = "annother one?!?!?!"
+
+        # create label
+        Label(
+            self,
+            text = page1Text
+        ).grid(row = 0, column = 0)
+
+class Page3(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        f = Frame(self)
+        f.grid(row = 0, column = 0)
+
+        # intro text for init tab
+        page1Text = "THERE'S MORE"
+
+        # create label
+        Label(
+            self,
+            text = page1Text
+        ).grid(row = 0, column = 0)
+        
 
 # !!! TESTING USER INPUT AND STUFF !!!
 '''
@@ -90,4 +208,4 @@ drop.pack(expand = True)
 '''
 
 #Mainloop
-root.mainloop()
+StratUI().mainloop()
