@@ -197,7 +197,7 @@ def get_competition_ranking(year=2019):
 
 # Get team matches in a season or in a specific event
 # Set simple to false in order to get more data
-def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
+def get_team_matches(team=4500, event=False, year=2019, simple=True):
     if simple:
         # if there is no event input
         if not event:
@@ -294,7 +294,11 @@ def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
         # if there is no event input
         if not event:
             matches = tba.team_matches(team=team, year=year, simple=simple)
-            baseMatch = matches[0]
+
+            try:
+                baseMatch = matches[0]
+            except:
+                return
 
             # Define headers
             vals = []
@@ -370,7 +374,11 @@ def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
         # if there is event input
         else:
             matches = tba.team_matches(team=team, event=event, year=year, simple=simple)
-            baseMatch = matches[0]
+
+            try:
+                baseMatch = matches[0]
+            except:
+                return
 
             # Define headers
             vals = []
@@ -442,9 +450,13 @@ def get_team_matches_info(team=4500, event=False, year=2019, simple=True):
 
 # Get event matches in a specific event
 # Set simple to false in order to get more data
-def get_event_matches_info(event='2019mosl', simple=True):
+def get_event_matches(event='2019mosl', simple=True):
     matches = tba.event_matches(event=event, simple=simple)
-    baseMatch = matches[0]
+
+    try:
+        baseMatch = matches[0]
+    except:
+        return
 
     # Define headers
     vals = []
@@ -513,4 +525,296 @@ def get_event_matches_info(event='2019mosl', simple=True):
     # Return lines
     return vals
 
-get_event_matches_info(simple=False)
+
+# Get competition match information
+# Set simple to false in order to get more data
+def get_competition_matches(year=2022, event=False, simple=True):
+    if simple:
+        if event:
+            # Matches for all teams
+            matches = []
+            for team in COMPETITION_TEAMS:
+                team_matches = tba.team_matches(team=team, event=event, simple=simple)
+
+                try:
+                    for match in team_matches:
+
+                        if match not in matches:
+                            matches.append(match)
+                except:
+                    return
+
+            vals = [
+                ['competition', 'actual time', 'blue alliance dq team keys', 'blue alliance score',
+                 'blue alliance surrogate team keys', 'blue alliance team keys', 'red alliance dq team keys',
+                 'red alliance score', 'red alliance surrogate team keys', 'red alliance team keys',
+                 'competition level', 'event key', 'match key', 'match number', 'predicted time', 'set number', 'time',
+                 'winning alliance']
+            ]
+
+            for match in matches:
+                # values of dictionaries
+                values = match.values()
+
+                # A temporary holder to make vals an array
+                tmp_holder = [tba.event(match['event_key'])['name']]
+
+                # iterate over the match values
+                for val in values:
+                    # If the value is a dictionary
+                    if type(val) == dict:
+                        # Get values from dictionary
+                        dictionary_values = val.values()
+
+                        # iterate over values
+                        for dictionary_value in dictionary_values:
+                            # For dictionary array
+                            item_value = dictionary_value.values()
+
+                            # Append each item to tmp_holder
+                            for item in item_value:
+                                tmp_holder.append(item)
+                    else:
+                        # If the value is not a dictionary, just append it to tmp_holder
+                        tmp_holder.append(val)
+
+                # Append tmp_holder to vals
+                vals.append(tmp_holder)
+
+            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+                writer = csv.writer(output)
+                writer.writerows(vals)
+
+        else:
+            # Matches for all teams
+            matches = []
+            for team in COMPETITION_TEAMS:
+                team_matches = tba.team_matches(team=team, simple=simple)
+
+                try:
+                    for match in team_matches:
+
+                        if match not in matches:
+                            matches.append(match)
+                except:
+                    return
+
+            vals = [
+                ['competition', 'actual time', 'blue alliance dq team keys', 'blue alliance score',
+                 'blue alliance surrogate team keys', 'blue alliance team keys', 'red alliance dq team keys',
+                 'red alliance score', 'red alliance surrogate team keys', 'red alliance team keys',
+                 'competition level', 'event key', 'match key', 'match number', 'predicted time', 'set number',
+                 'time',
+                 'winning alliance']
+            ]
+
+            for match in matches:
+                # values of dictionaries
+                values = match.values()
+
+                # A temporary holder to make vals an array
+                # Event name
+                tmp_holder = [tba.event(match['event_key'])['name']]
+
+                # iterate over the match values
+                for val in values:
+                    # If the value is a dictionary
+                    if type(val) == dict:
+                        # Get values from dictionary
+                        dictionary_values = val.values()
+
+                        # iterate over values
+                        for dictionary_value in dictionary_values:
+                            # For dictionary array
+                            item_value = dictionary_value.values()
+
+                            # Append each item to tmp_holder
+                            for item in item_value:
+                                tmp_holder.append(item)
+                    else:
+                        # If the value is not a dictionary, just append it to tmp_holder
+                        tmp_holder.append(val)
+
+                # Append tmp_holder to vals
+                vals.append(tmp_holder)
+
+            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+                writer = csv.writer(output)
+                writer.writerows(vals)
+
+    else:
+        if event:
+            matches = []
+
+            for team in COMPETITION_TEAMS:
+                team_matches = tba.team_matches(team=team, event=event, year=year, simple=simple)
+
+                try:
+                    for match in team_matches:
+
+                        if match not in matches:
+                            matches.append(match)
+                except:
+                    return
+
+            try:
+                baseMatch = matches[0]
+            except:
+                return
+
+            # Define headers
+            vals = []
+
+            try:
+                keys = matches[0].keys()
+            except:
+                return
+
+            headers = ['competition']
+
+            for key in keys:
+                key_string = ""
+                if type(baseMatch[key]) == dict:
+                    key_string += key + '.'
+                    newKeys = baseMatch[key].keys()
+
+                    for newKey in newKeys:
+                        if type(baseMatch[key][newKey]) == dict:
+                            key_string += newKey + '.'
+
+                            moreKeys = baseMatch[key][newKey].keys()
+
+                            for mKey in moreKeys:
+                                headers.append(key_string + mKey)
+
+                        else:
+                            headers.append(key_string + newKey)
+
+                else:
+                    headers.append(key)
+
+            vals.append(headers)
+
+            # iterate over matches
+            for match in matches:
+                # values of dictionaries
+                values = match.values()
+
+                # A temporary holder to make vals an array
+                tmp_holder = [tba.event(match['event_key'])['name']]
+
+                # iterate over the match values
+                for val in values:
+                    # If the value is a dictionary
+                    if type(val) == dict:
+                        # Get values from dictionary
+                        dictionary_values = val.values()
+
+                        # iterate over values
+                        for dictionary_value in dictionary_values:
+                            # For dictionary array
+                            item_value = dictionary_value.values()
+
+                            # Append each item to tmp_holder
+                            for item in item_value:
+                                tmp_holder.append(item)
+                    else:
+                        # If the value is not a dictionary, just append it to tmp_holder
+                        tmp_holder.append(val)
+
+                # Append tmp_holder to vals
+                vals.append(tmp_holder)
+
+            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+                writer = csv.writer(output)
+                writer.writerows(vals)
+
+        else:
+            matches = []
+
+            for team in COMPETITION_TEAMS:
+                team_matches = tba.team_matches(team=team, year=year, simple=simple)
+
+                for match in team_matches:
+                    event_name = tba.event(match['event_key'])['name']
+
+                    if match not in matches:
+                        matches.append(match)
+
+            try:
+                baseMatch = matches[0]
+            except:
+                return
+
+            # Define headers
+            vals = []
+
+            try:
+                keys = matches[0].keys()
+            except:
+                return
+
+            headers = ['competition']
+
+            for key in keys:
+                key_string = ""
+                if type(baseMatch[key]) == dict:
+                    key_string += key + '.'
+                    newKeys = baseMatch[key].keys()
+
+                    for newKey in newKeys:
+                        if type(baseMatch[key][newKey]) == dict:
+                            key_string += newKey + '.'
+
+                            moreKeys = baseMatch[key][newKey].keys()
+
+                            for mKey in moreKeys:
+                                headers.append(key_string + mKey)
+
+                        else:
+                            headers.append(key_string + newKey)
+
+                else:
+                    headers.append(key)
+
+            vals.append(headers)
+
+            # iterate over matches
+            for match in matches:
+                # values of dictionaries
+                values = match.values()
+
+                # A temporary holder to make vals an array
+                tmp_holder = [tba.event(match['event_key'])['name']]
+
+                # iterate over the match values
+                for val in values:
+                    # If the value is a dictionary
+                    if type(val) == dict:
+                        # Get values from dictionary
+                        dictionary_values = val.values()
+
+                        # iterate over values
+                        for dictionary_value in dictionary_values:
+                            # For dictionary array
+                            item_value = dictionary_value.values()
+
+                            # Append each item to tmp_holder
+                            for item in item_value:
+                                tmp_holder.append(item)
+                    else:
+                        # If the value is not a dictionary, just append it to tmp_holder
+                        tmp_holder.append(val)
+
+                # Append tmp_holder to vals
+                vals.append(tmp_holder)
+
+            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+                writer = csv.writer(output)
+                writer.writerows(vals)
+
+    # Return lines
+    return vals
+
+
+get_competition_matches(simple=False)
