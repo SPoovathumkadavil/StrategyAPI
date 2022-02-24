@@ -13,6 +13,8 @@ Needs:
  - Get event, team, and match info and export it to a csv
  - Simple and functional interface
  - Exported as a .exe (for familiar ease of use)
+ - Settings and Help page
+ - Credits
 
 Wants:
  - excel files
@@ -32,62 +34,55 @@ class StratUI(Tk):
     def __init__(self, *args, **kwargs):
         #init Tk
         Tk.__init__(self, *args, **kwargs)
+        self.geometry("400x400")
+        self.title("StrategyAPI")
 
         #create container
-        container = Frame(self)
+        container = Frame(self, bg = 'blue')
         container.pack(
             side = "top",
             fill = "both",
             expand = True
         )
 
-        container.grid_rowconfigure(0, weight = 1)
+        container.grid_rowconfigure(0, weight = 0) # weight 0 means it just takes up only necessary space at the top
         container.grid_rowconfigure(1, weight = 1)
         container.grid_columnconfigure(0, weight = 1)
 
         # General GUI
-        # TODO: - put this on another frame so im not bound to 3 buttons with "sticky"
+        # this is GUI that is always on screen regardless of tab
+        tabs = Frame(container, bg = 'Black') # tab selection button container
+        tabs.pack(side = "top",fill = "both",expand = True)
+        tabs.grid(row = 0, sticky = "nsew")
+        tabs.grid_columnconfigure(0, weight = 1)
+        tabs.grid_columnconfigure(1, weight = 1)
+        tabs.grid_columnconfigure(2, weight = 1)
+        tabs.grid_rowconfigure(0, weight = 1)
+
         #page 1 button
         Button(
-            container,
+            tabs,
             text = "Page1",
             command = lambda : self.showFrame(Page1)
-        ).grid(
-            row = 0, 
-            column = 0, 
-            sticky = "nw",
-            padx = 10,
-            pady = 10
-        )
+        ).grid(row = 0, column = 0, sticky = "nws", padx = 10, pady = 10)
         # page 2 button
         Button(
-            container,
+            tabs,
             text = "Page2",
             command = lambda : self.showFrame(Page2)
-        ).grid(
-            row = 0, 
-            column = 0, 
-            sticky = "n",
-            padx = 10,
-            pady = 10
-        )
+        ).grid(row = 0, column = 1, sticky = "ns", padx = 10, pady = 10)
         # page 3 button
         Button(
-            container,
+            tabs,
             text = "Page3",
             command = lambda : self.showFrame(Page3)
-        ).grid(
-            row = 0, 
-            column = 0, 
-            sticky = "ne",
-            padx = 10,
-            pady = 10
-        )
+        ).grid(row = 0, column = 2, sticky = "nes", padx = 10, pady = 10)
 
 
         # Tabs
         self.frames = {}
 
+        #initalize all tabs
         for F in (StartPage, Page1, Page2, Page3): #order pages with init page first
             page = F(container, self)
 
@@ -105,38 +100,62 @@ class StratUI(Tk):
         page.tkraise()
 
 class StartPage(Frame):
+    # Stuff on this page:
+    #  - Welcome message and explenation
+    #  - Settings and credit buttons
+    #  - Quit button
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
+        self.grid_columnconfigure(0, weight = 1)
+        self.grid_rowconfigure(0, weight = 1)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0)
-
-        # intro text for init tab
-        introText = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
+        f.grid(row = 0, column = 0, sticky = 'nsew')
+        f.pack(side = "top",fill = "both",expand = True)
+        f.grid_columnconfigure(0, weight = 1)
+        f.grid_rowconfigure(0, weight = 1)
 
         # create label
         Label(
-            self,
-            text = introText
-        ).grid(row = 0, column = 0)
+            f,
+            text = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
+        ).grid(row = 0, column = 0, sticky = 'n')
 
+# Overall Event Information
 class Page1(Frame):
+    # Stuff on this page:
+    #  - event key input (maybe event name to event key?)
+    #  - whatever that bool value is as a check box?
+    #  - Sal pls halp
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
+        self.grid(row = 0, column = 0, sticky = 'nsew')
 
+        # init frame
         f = Frame(self)
-        f.grid(row = 0, column = 0)
-
-        # intro text for init tab
-        page1Text = "yo this is a different page"
+        f.grid(row = 0, column = 0, sticky = 'nsew')
+        f.pack(side = "top",fill = "both",expand = True)
+        f.grid_columnconfigure(0, weight = 1)
+        f.grid_rowconfigure(0, weight = 1)
 
         # create label
-        Label(
-            self,
-            text = page1Text
-        ).grid(row = 0, column = 0)
+        Label(f,
+            text = "Overall Event Information"
+        ).grid(row = 0, column = 0, sticky = 'nsew')
 
+        # run button
+        Button(f,
+            text = "Run",
+            command = lambda : print("nice")
+        ).grid(row = 0, column = 0, sticky = "se", padx = 10, pady = 10)
+
+# Team specific information
 class Page2(Frame):
+    # Stuff on this page:
+    #  - Sal pls halp pls :smile:
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
@@ -150,9 +169,13 @@ class Page2(Frame):
         Label(
             self,
             text = page1Text
-        ).grid(row = 0, column = 0)
+        ).grid(row = 0, column = 0, sticky = 'nsew')
 
+# Team match information from a specific year
 class Page3(Frame):
+    # Stuff on this page:
+    #  - ahhhhhhhh
+
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
@@ -166,7 +189,7 @@ class Page3(Frame):
         Label(
             self,
             text = page1Text
-        ).grid(row = 0, column = 0)
+        ).grid(row = 0, column = 0, sticky = 'nsew')
         
 
 # !!! TESTING USER INPUT AND STUFF !!!
