@@ -1,3 +1,15 @@
+# My idea for the pages:
+# There should be 2 pages:
+# 1. rankings
+# 2. matches Each page should have different options.
+# This, for example would be choosing the ranking function, team match function etc.
+# Each of these main options should have sub options. These include event keys,
+# simple or advanced, etc.
+# From there, the function automatically writes to a csv file that can be easily exported to google sheets
+# or excel.
+# - Sal
+
+
 '''
 This is the main GUI
 it will include multiple pages with a simple and usable interface
@@ -28,75 +40,74 @@ Wants:
 from TBAFunctions import *
 from tkinter import *
 
+
 class StratUI(Tk):
 
     # init app
     def __init__(self, *args, **kwargs):
-        #init Tk
+        # init Tk
         Tk.__init__(self, *args, **kwargs)
         self.geometry("400x400")
 
-        #create container
-        container = Frame(self, bg = 'blue')
+        # create container
+        container = Frame(self, bg='blue')
         container.pack(
-            side = "top",
-            fill = "both",
-            expand = True
+            side="top",
+            fill="both",
+            expand=True
         )
 
-        container.grid_rowconfigure(0, weight = 0) # weight 0 means it just takes up only necessary space at the top
-        container.grid_rowconfigure(1, weight = 1)
-        container.grid_columnconfigure(0, weight = 1)
+        container.grid_rowconfigure(0, weight=0)  # weight 0 means it just takes up only necessary space at the top
+        container.grid_rowconfigure(1, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
         # General GUI
         # this is GUI that is always on screen regardless of tab
-        tabs = Frame(container, bg = 'Black') # tab selection button container
-        tabs.pack(side = "top",fill = "both",expand = True)
-        tabs.grid(row = 0, sticky = "nsew")
-        tabs.grid_columnconfigure(0, weight = 1)
-        tabs.grid_columnconfigure(1, weight = 1)
-        tabs.grid_columnconfigure(2, weight = 1)
-        tabs.grid_rowconfigure(0, weight = 1)
+        tabs = Frame(container, bg='Black')  # tab selection button container
+        tabs.pack(side="top", fill="both", expand=True)
+        tabs.grid(row=0, sticky="nsew")
+        tabs.grid_columnconfigure(0, weight=1)
+        tabs.grid_columnconfigure(1, weight=1)
+        tabs.grid_columnconfigure(2, weight=1)
+        tabs.grid_rowconfigure(0, weight=1)
 
-        #page 1 button
+        # page 1 button
         Button(
             tabs,
-            text = "Page1",
-            command = lambda : self.showFrame(Page1)
-        ).grid(row = 0, column = 0, sticky = "nws", padx = 10, pady = 10)
+            text="Page1",
+            command=lambda: self.showFrame(RankingInfo)
+        ).grid(row=0, column=0, sticky="nws", padx=10, pady=10)
         # page 2 button
         Button(
             tabs,
-            text = "Page2",
-            command = lambda : self.showFrame(Page2)
-        ).grid(row = 0, column = 1, sticky = "ns", padx = 10, pady = 10)
+            text="Page2",
+            command=lambda: self.showFrame(Page2)
+        ).grid(row=0, column=1, sticky="ns", padx=10, pady=10)
         # page 3 button
         Button(
             tabs,
-            text = "Page3",
-            command = lambda : self.showFrame(Page3)
-        ).grid(row = 0, column = 2, sticky = "nes", padx = 10, pady = 10)
-
+            text="Page3",
+            command=lambda: self.showFrame(Page3)
+        ).grid(row=0, column=2, sticky="nes", padx=10, pady=10)
 
         # Tabs
         self.frames = {}
 
-        #initalize all tabs
-        for F in (StartPage, Page1, Page2, Page3): #order pages with init page first
+        # initalize all tabs
+        for F in (StartPage, RankingInfo, Page2, Page3):  # order pages with init page first
             page = F(container, self)
 
             self.frames[F] = page
 
-            page.grid(row = 1, column = 0, sticky ="nsew")
+            page.grid(row=1, column=0, sticky="nsew")
 
-            
-        
-        self.showFrame(StartPage)#start page
-    
-    #display current frame
+        self.showFrame(StartPage)  # start page
+
+    # display current frame
     def showFrame(self, cont):
         page = self.frames[cont]
         page.tkraise()
+
 
 class StartPage(Frame):
     # Stuff on this page:
@@ -106,23 +117,24 @@ class StartPage(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.grid_columnconfigure(0, weight = 1)
-        self.grid_rowconfigure(0, weight = 1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0, sticky = 'nsew')
-        f.pack(side = "top",fill = "both",expand = True)
-        f.grid_columnconfigure(0, weight = 1)
-        f.grid_rowconfigure(0, weight = 1)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
 
         # create label
         Label(
             f,
-            text = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
-        ).grid(row = 0, column = 0, sticky = 'n')
+            text="Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
+        ).grid(row=0, column=0, sticky='n')
+
 
 # Overall Event Information
-class Page1(Frame):
+class RankingInfo(Frame):
     # Stuff on this page:
     #  - event key input (maybe event name to event key?)
     #  - whatever that bool value is as a check box?
@@ -130,25 +142,28 @@ class Page1(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.grid(row = 0, column = 0, sticky = 'nsew')
+        self.grid(row=0, column=0, sticky='nsew')
 
         # init frame
         f = Frame(self)
-        f.grid(row = 0, column = 0, sticky = 'nsew')
-        f.pack(side = "top",fill = "both",expand = True)
-        f.grid_columnconfigure(0, weight = 1)
-        f.grid_rowconfigure(0, weight = 1)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
 
         # create label
         Label(f,
-            text = "Overall Event Information"
-        ).grid(row = 0, column = 0, sticky = 'nsew')
+              text="Overall Event Information"
+              ).grid(row=0, column=0, sticky='nsew')
+
+        # TODO - Add "button" list thing to choose what function for ranking (event, competition) and it's options.
 
         # run button
         Button(f,
-            text = "Run",
-            command = lambda : print("nice")
-        ).grid(row = 0, column = 0, sticky = "se", padx = 10, pady = 10)
+               text="Run",
+               command=lambda: print("nice")  # TODO - Change command to corresponding choice from list
+               ).grid(row=0, column=0, sticky="se", padx=10, pady=10)
+
 
 # Team specific information
 class Page2(Frame):
@@ -159,7 +174,7 @@ class Page2(Frame):
         Frame.__init__(self, parent)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0)
+        f.grid(row=0, column=0)
 
         # intro text for init tab
         page1Text = "annother one?!?!?!"
@@ -167,8 +182,9 @@ class Page2(Frame):
         # create label
         Label(
             self,
-            text = page1Text
-        ).grid(row = 0, column = 0, sticky = 'nsew')
+            text=page1Text
+        ).grid(row=0, column=0, sticky='nsew')
+
 
 # Team match information from a specific year
 class Page3(Frame):
@@ -179,7 +195,7 @@ class Page3(Frame):
         Frame.__init__(self, parent)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0)
+        f.grid(row=0, column=0)
 
         # intro text for init tab
         page1Text = "THERE'S MORE"
@@ -187,9 +203,9 @@ class Page3(Frame):
         # create label
         Label(
             self,
-            text = page1Text
-        ).grid(row = 0, column = 0, sticky = 'nsew')
-        
+            text=page1Text
+        ).grid(row=0, column=0, sticky='nsew')
+
 
 # !!! TESTING USER INPUT AND STUFF !!!
 '''
@@ -229,5 +245,5 @@ drop = OptionMenu(
 drop.pack(expand = True)
 '''
 
-#Mainloop
+# Mainloop
 StratUI().mainloop()
