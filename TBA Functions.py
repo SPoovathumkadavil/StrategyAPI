@@ -88,11 +88,11 @@ tba = tbapy.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJ
 
 
 # specific event ranking info
-def get_event_ranking(event_key='2019mosl', f=False):
+def get_event_ranking(event_key='2022week0', f=False):
     # get name of the event
     event = tba.event(event_key)['name']
 
-    # get event rankings using the event key eg. '2019mosl'
+    # get event rankings using the event key eg. '2022week0'
     # returns list of dictionaries with teams sorted by ranking
     # Collect keys from dictionary
     try:
@@ -450,7 +450,7 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
 
 # Get event matches in a specific event
 # Set simple to false in order to get more data
-def get_event_matches(event='2019mosl', simple=True):
+def get_event_matches(event='2022week0', simple=True):
     matches = tba.event_matches(event=event, simple=simple)
 
     try:
@@ -817,4 +817,32 @@ def get_competition_matches(year=2022, event=False, simple=True):
     return vals
 
 
-get_competition_matches(simple=False)
+# Get event insights
+# eg. average score, climb, taxi, etc.
+def get_event_insights(event='2022week0', t='playoff'):
+    ins = tba.event_insights(event)[t]
+
+    keys = []
+    insights = []
+
+    for s in ins:
+        keys.append(s)
+
+    insights.append(keys)
+
+    tmp_holder = []
+
+    for key in keys:
+        tmp_holder.append(ins[key])
+
+    insights.append(tmp_holder)
+
+    with open('output/event_insight_info_output.csv', 'w', newline='') as output:
+        writer = csv.writer(output)
+        writer.writerows(insights)
+
+    return insights
+
+
+for i in get_event_insights():
+    print(i)
