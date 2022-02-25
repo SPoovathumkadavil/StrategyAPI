@@ -1,12 +1,19 @@
 #!usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
+'''
+    Functions for main.py
+'''
+
+
 __author__ = "Saaleh Poovathumkadavil"
 __credits__ = "Saaleh Poovathumkadavil"
 __license__ = "FRC4500"
 __maintainer__ = "Saaleh Poovathumkadavil"
 __status__ = "Development"
 __version__ = "0.0.1"
+
 
 import csv
 import tbapy
