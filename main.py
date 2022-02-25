@@ -1,3 +1,15 @@
+# My idea for the pages:
+# There should be 2 pages:
+# 1. rankings
+# 2. matches Each page should have different options.
+# This, for example would be choosing the ranking function, team match function etc.
+# Each of these main options should have sub options. These include event keys,
+# simple or advanced, etc.
+# From there, the function automatically writes to a csv file that can be easily exported to google sheets
+# or excel.
+# - Sal
+
+
 '''
 This is the main GUI
 it will include multiple pages with a simple and usable interface
@@ -28,11 +40,12 @@ Wants:
 from TBAFunctions import *
 from tkinter import *
 
+
 class StratUI(Tk):
 
     # init app
     def __init__(self, *args, **kwargs):
-        #init Tk
+        # init Tk
         Tk.__init__(self, *args, **kwargs)
         self.geometry("400x400")
         self.title("StrategyAPI")
@@ -40,9 +53,9 @@ class StratUI(Tk):
         #create container
         container = Frame(self, bg = 'blue')
         container.pack(
-            side = "top",
-            fill = "both",
-            expand = True
+            side="top",
+            fill="both",
+            expand=True
         )
 
         container.grid_rowconfigure(0, weight = 0) # weight 0 means it just takes up only necessary space at the top
@@ -88,16 +101,15 @@ class StratUI(Tk):
 
             self.frames[F] = page
 
-            page.grid(row = 1, column = 0, sticky ="nsew")
+            page.grid(row=1, column=0, sticky="nsew")
 
-            
-        
-        self.showFrame(StartPage)#start page
-    
-    #display current frame
+        self.showFrame(StartPage)  # start page
+
+    # display current frame
     def showFrame(self, cont):
         page = self.frames[cont]
         page.tkraise()
+
 
 class StartPage(Frame):
     # Stuff on this page:
@@ -160,7 +172,7 @@ class Page2(Frame):
         Frame.__init__(self, parent)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0)
+        f.grid(row=0, column=0)
 
         # intro text for init tab
         page1Text = "annother one?!?!?!"
@@ -180,7 +192,7 @@ class Page3(Frame):
         Frame.__init__(self, parent)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0)
+        f.grid(row=0, column=0)
 
         # intro text for init tab
         page1Text = "THERE'S MORE"
@@ -230,5 +242,5 @@ drop = OptionMenu(
 drop.pack(expand = True)
 '''
 
-#Mainloop
+# Mainloop
 StratUI().mainloop()
