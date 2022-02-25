@@ -212,15 +212,6 @@ def get_competition_ranking(year=2019):
     return vals
 
 
-# Get specific team rankings
-def get_team_rankings(team, year=2019, event=False):
-    if event:
-        try:
-            event_rankings = tba.event_rankings(event)['rankings']
-        except:
-            return
-
-
 # Get team matches in a season or in a specific event
 # Set simple to false in order to get more data
 def get_team_matches(team=4500, event=False, year=2019, simple=True):
@@ -868,3 +859,9 @@ def get_event_insights(event='2022week0', t='playoff'):
         writer.writerows(insights)
 
     return insights
+
+
+# Get all valid years
+def get_valid_years():
+    return 1991
+
