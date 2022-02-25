@@ -8,8 +8,8 @@ __maintainer__ = "Saaleh Poovathumkadavil"
 __status__ = "Development"
 __version__ = "0.0.1"
 
-import tbapy
 import csv
+import tbapy
 
 COMPETITION_TEAMS = [
     111,
@@ -214,10 +214,6 @@ def get_team_rankings(team, year=2019, event=False):
             return
 
 
-
-
-
-
 # Get team matches in a season or in a specific event
 # Set simple to false in order to get more data
 def get_team_matches(team=4500, event=False, year=2019, simple=True):
@@ -340,20 +336,20 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
                 # If current value is a dictionary
                 if type(baseMatch[key]) == dict:
                     # Add
-                    key_string += key+'.'
+                    key_string += key + '.'
                     newKeys = baseMatch[key].keys()
 
                     for newKey in newKeys:
                         if type(baseMatch[key][newKey]) == dict:
-                            key_string += newKey+'.'
+                            key_string += newKey + '.'
 
                             moreKeys = baseMatch[key][newKey].keys()
 
                             for mKey in moreKeys:
-                                headers.append(key_string+mKey)
+                                headers.append(key_string + mKey)
 
                         else:
-                            headers.append(key_string+newKey)
+                            headers.append(key_string + newKey)
 
                 else:
                     headers.append(key)
@@ -865,5 +861,3 @@ def get_event_insights(event='2022week0', t='playoff'):
         writer.writerows(insights)
 
     return insights
-
-
