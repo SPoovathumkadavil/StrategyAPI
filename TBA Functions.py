@@ -1,3 +1,13 @@
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+__author__ = "Saaleh Poovathumkadavil"
+__credits__ = "Saaleh Poovathumkadavil"
+__license__ = "FRC4500"
+__maintainer__ = "Saaleh Poovathumkadavil"
+__status__ = "Development"
+__version__ = "0.0.1"
+
 import tbapy
 import csv
 
@@ -87,7 +97,7 @@ tba = tbapy.TBA('import tbapy')
 tba = tbapy.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJS')
 
 
-# specific event ranking info
+# Get specific event ranking info
 def get_event_ranking(event_key='2022week0', f=False):
     # get name of the event
     event = tba.event(event_key)['name']
@@ -193,6 +203,19 @@ def get_competition_ranking(year=2019):
 
     # Return lines
     return vals
+
+
+# Get specific team rankings
+def get_team_rankings(team, year=2019, event=False):
+    if event:
+        try:
+            event_rankings = tba.event_rankings(event)['rankings']
+        except:
+            return
+
+
+
+
 
 
 # Get team matches in a season or in a specific event
@@ -844,5 +867,3 @@ def get_event_insights(event='2022week0', t='playoff'):
     return insights
 
 
-for i in get_event_insights():
-    print(i)
