@@ -12,7 +12,6 @@ __version__ = "0.0.1"
 
 import csv
 import tbapy
-import datetime
 
 COMPETITION_TEAMS = [
     111,
