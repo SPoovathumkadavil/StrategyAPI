@@ -10,8 +10,12 @@ __status__ = "Development"
 __version__ = "0.0.1"
 
 
+
+
 import csv
 import tbapy
+import os
+import sys
 
 COMPETITION_TEAMS = [
     111,
@@ -93,6 +97,7 @@ COMPETITION_TEAMS = [
     8077,
     8719
 ]
+application_path = os.path.dirname(sys.executable)
 
 # initialize The Blue Alliance object
 tba = tbapy.TBA('import tbapy')
@@ -142,7 +147,7 @@ def get_event_ranking(event_key='2022week0', f=False):
     # If standalone
     else:
         # Open an output csv file and put value data in it
-        with open('output/event_info_data.csv', 'w', newline='') as output:
+        with open(application_path+'event_info_data.csv', 'w', newline='') as output:
             # Create a writer cursor
             writer = csv.writer(output)
 
@@ -204,7 +209,7 @@ def get_competition_ranking(year=2019):
             vals.append(tmp_holder)
 
         # Write to csv file
-    with open('output/competition_info_output.csv', 'w', newline='') as output:
+    with open(application_path+'competition_info_output.csv', 'w', newline='') as output:
         writer = csv.writer(output)
         writer.writerows(vals)
 
@@ -259,7 +264,7 @@ def get_team_matches(team=4500, event_key=False, year=2019, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/team_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'team_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -384,7 +389,7 @@ def get_team_matches(team=4500, event_key=False, year=2019, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/team_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'team_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -457,7 +462,7 @@ def get_team_matches(team=4500, event_key=False, year=2019, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/team_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'team_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -535,7 +540,7 @@ def get_event_matches(event_key='2022week0', simple=True):
         # Append tmp_holder to vals
         vals.append(tmp_holder)
 
-    with open('output/event_matches_info_output.csv', 'w', newline='') as output:
+    with open(application_path+'event_matches_info_output.csv', 'w', newline='') as output:
         writer = csv.writer(output)
         writer.writerows(vals)
 
@@ -598,7 +603,7 @@ def get_competition_matches(year=2022, event_key=False, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'competition_teams_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -655,7 +660,7 @@ def get_competition_matches(year=2022, event_key=False, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'competition_teams_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -742,7 +747,7 @@ def get_competition_matches(year=2022, event_key=False, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'competition_teams_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -826,7 +831,7 @@ def get_competition_matches(year=2022, event_key=False, simple=True):
                 # Append tmp_holder to vals
                 vals.append(tmp_holder)
 
-            with open('output/competition_teams_matches_info_output.csv', 'w', newline='') as output:
+            with open(application_path+'competition_teams_matches_info_output.csv', 'w', newline='') as output:
                 writer = csv.writer(output)
                 writer.writerows(vals)
 
@@ -854,7 +859,7 @@ def get_event_insights(event_key='2022week0', t='playoff'):
 
     insights.append(tmp_holder)
 
-    with open('output/event_insight_info_output.csv', 'w', newline='') as output:
+    with open(application_path+'event_insight_info_output.csv', 'w', newline='') as output:
         writer = csv.writer(output)
         writer.writerows(insights)
 
@@ -931,4 +936,6 @@ def get_insight(event_key=False, type=False):
         except:
             return 1
     return
+
+
 
