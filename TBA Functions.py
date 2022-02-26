@@ -2,11 +2,6 @@
 # -*- coding: utf-8 -*-
 
 
-'''
-    Functions for main.py
-'''
-
-
 __author__ = "Saaleh Poovathumkadavil"
 __credits__ = "Saaleh Poovathumkadavil"
 __license__ = "FRC4500"
@@ -17,6 +12,7 @@ __version__ = "0.0.1"
 
 import csv
 import tbapy
+import datetime
 
 COMPETITION_TEAMS = [
     111,
@@ -102,6 +98,11 @@ COMPETITION_TEAMS = [
 # initialize The Blue Alliance object
 tba = tbapy.TBA('import tbapy')
 tba = tbapy.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJS')
+
+
+'''
+    Original Functions
+'''
 
 
 # Get specific event ranking info
@@ -214,10 +215,10 @@ def get_competition_ranking(year=2019):
 
 # Get team matches in a season or in a specific event
 # Set simple to false in order to get more data
-def get_team_matches(team=4500, event=False, year=2019, simple=True):
+def get_team_matches(team=4500, event_key=False, year=2019, simple=True):
     if simple:
         # if there is no event input
-        if not event:
+        if not event_key:
             matches = tba.team_matches(team=team, year=year, simple=simple)
 
             # Define headers
@@ -265,7 +266,7 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
 
         # if there is event input
         else:
-            matches = tba.team_matches(team=team, event=event, year=year, simple=simple)
+            matches = tba.team_matches(team=team, event=event_key, year=year, simple=simple)
 
             # Define headers
             vals = [
@@ -309,7 +310,7 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
     # If advanced information needed
     else:
         # if there is no event input
-        if not event:
+        if not event_key:
             matches = tba.team_matches(team=team, year=year, simple=simple)
 
             try:
@@ -390,7 +391,7 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
 
         # if there is event input
         else:
-            matches = tba.team_matches(team=team, event=event, year=year, simple=simple)
+            matches = tba.team_matches(team=team, event=event_key, year=year, simple=simple)
 
             try:
                 baseMatch = matches[0]
@@ -467,8 +468,8 @@ def get_team_matches(team=4500, event=False, year=2019, simple=True):
 
 # Get event matches in a specific event
 # Set simple to false in order to get more data
-def get_event_matches(event='2022week0', simple=True):
-    matches = tba.event_matches(event=event, simple=simple)
+def get_event_matches(event_key='2022week0', simple=True):
+    matches = tba.event_matches(event=event_key, simple=simple)
 
     try:
         baseMatch = matches[0]
@@ -545,13 +546,13 @@ def get_event_matches(event='2022week0', simple=True):
 
 # Get competition match information
 # Set simple to false in order to get more data
-def get_competition_matches(year=2022, event=False, simple=True):
+def get_competition_matches(year=2022, event_key=False, simple=True):
     if simple:
-        if event:
+        if event_key:
             # Matches for all teams
             matches = []
             for team in COMPETITION_TEAMS:
-                team_matches = tba.team_matches(team=team, event=event, simple=simple)
+                team_matches = tba.team_matches(team=team, event=event_key, simple=simple)
 
                 try:
                     for match in team_matches:
@@ -660,11 +661,11 @@ def get_competition_matches(year=2022, event=False, simple=True):
                 writer.writerows(vals)
 
     else:
-        if event:
+        if event_key:
             matches = []
 
             for team in COMPETITION_TEAMS:
-                team_matches = tba.team_matches(team=team, event=event, year=year, simple=simple)
+                team_matches = tba.team_matches(team=team, event=event_key, year=year, simple=simple)
 
                 try:
                     for match in team_matches:
@@ -836,8 +837,8 @@ def get_competition_matches(year=2022, event=False, simple=True):
 
 # Get event insights
 # eg. average score, climb, taxi, etc.
-def get_event_insights(event='2022week0', t='playoff'):
-    ins = tba.event_insights(event)[t]
+def get_event_insights(event_key='2022week0', t='playoff'):
+    ins = tba.event_insights(event_key)[t]
 
     keys = []
     insights = []
@@ -861,7 +862,74 @@ def get_event_insights(event='2022week0', t='playoff'):
     return insights
 
 
-# Get all valid years
-def get_valid_years():
-    return 1991
+'''
+    Helper functions/actual function to be used in main.py
+'''
+
+
+# Get all types of rankings
+def get_ranking(competition=False, year=False, event_key=False):
+    if not event_key:
+        if not year:
+            return
+        if not competition:
+            return
+        try:
+            return get_competition_ranking(year)
+        except:
+            return 1
+    else:
+        try:
+            return get_event_ranking(event_key)
+        except:
+            return 1
+
+
+# Get all matches for
+def get_matches(team=False, competition=False, year=False, event_key=False, simple=False):
+    if not event_key:
+        if not year:
+            return
+        if competition:
+            try:
+                return get_competition_matches(year)
+            except:
+                return 1
+        else:
+            try:
+                return get_team_matches(team=team, year=year, simple=simple)
+            except:
+                return 1
+        return
+    else:
+        if not year:
+            return
+        if competition:
+            try:
+                return get_competition_matches(year=year, event_key=event_key, simple=simple)
+            except:
+                return 1
+        if team != False:
+            try:
+                return get_team_matches(team=team, year=year, simple=simple, event_key=event_key)
+            except:
+                return 1
+        return
+
+
+# Get all event insight
+def get_insight(event_key=False, type=False):
+    if not event_key:
+        return
+    if not type:
+        try:
+            return get_event_insights(event_key=event_key)
+        except:
+            return 1
+    else:
+        try:
+            return get_event_insights(event_key=event_key, t=type)
+        except:
+            return 1
+    return
 
