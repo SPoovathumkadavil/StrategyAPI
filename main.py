@@ -37,9 +37,11 @@ Wants:
  - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
 '''
 
+from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
 
+year = int
 
 class StratUI(Tk):
 
@@ -126,13 +128,24 @@ class StartPage(Frame):
         f.grid(row = 0, column = 0, sticky = 'nsew')
         f.pack(side = "top",fill = "both",expand = True)
         f.grid_columnconfigure(0, weight = 1)
-        f.grid_rowconfigure(0, weight = 1)
+        f.grid_rowconfigure(1, weight = 1)
 
         # create label
         Label(
             f,
-            text = "Hello! Welcome to StrategyAPI!\nTo Begin, Select an option"
+            text = "Hello! Welcome to StrategyAPI!\nTo Begin, Select a Year"
         ).grid(row = 0, column = 0, sticky = 'n')
+
+        # create year pick dropdown menu
+        option = StringVar()
+        option.set("Year")
+        validYears = getValidYears()
+        OptionMenu(
+            f,
+            option,
+            *validYears,
+            command = updateYear
+        ).grid(row = 1, column = 0, sticky = 'n')
 
 # Overall Event Information
 class Page1(Frame):
@@ -203,6 +216,16 @@ class Page3(Frame):
             text = page1Text
         ).grid(row = 0, column = 0, sticky = 'nsew')
         
+# Data functions
+def getValidYears():
+    validYears = []
+    for i in range(1991, datetime.today().year):
+        validYears.append(i)
+    return validYears
+
+def updateYear(choice):
+    global year
+    year = int(choice)
 
 # !!! TESTING USER INPUT AND STUFF !!!
 '''
