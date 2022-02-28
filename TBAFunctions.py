@@ -935,5 +935,13 @@ def get_insight(event_key=False, type=False):
             return 1
     return
 
+# Get a list of events
+def getEvents(year):
+    eventNamesAndIDS = {}
+    eventDict = tba.events(year = year, simple = True)
+    for i in eventDict.keys():
+        eventNamesAndIDS[eventDict[i]['name']] = eventDict[i]['key']
+    return eventNamesAndIDS
+
 
 

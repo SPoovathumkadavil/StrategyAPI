@@ -1,13 +1,5 @@
-# My idea for the pages:
-# There should be 2 pages:
-# 1. rankings
-# 2. matches Each page should have different options.
-# This, for example would be choosing the ranking function, team match function etc.
-# Each of these main options should have sub options. These include event keys,
-# simple or advanced, etc.
-# From there, the function automatically writes to a csv file that can be easily exported to google sheets
-# or excel.
-# - Sal
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 
 '''
@@ -74,31 +66,31 @@ class StratUI(Tk):
         tabs.grid_columnconfigure(2, weight = 1)
         tabs.grid_rowconfigure(0, weight = 1)
 
-        #page 1 button
+        # Ranking tab
         Button(
             tabs,
-            text = "Page1",
-            command = lambda : self.showFrame(Page1)
-        ).grid(row = 0, column = 0, sticky = "nws", padx = 10, pady = 10)
-        # page 2 button
+            text="Ranking",
+            command=lambda: self.showFrame(Ranking)
+        ).grid(row=0, column=0, sticky="nws", padx=10, pady=10)
+        # Matches tab
         Button(
             tabs,
-            text = "Page2",
-            command = lambda : self.showFrame(Page2)
-        ).grid(row = 0, column = 1, sticky = "ns", padx = 10, pady = 10)
-        # page 3 button
+            text="Matches",
+            command=lambda: self.showFrame(Matches)
+        ).grid(row=0, column=1, sticky="ns", padx=10, pady=10)
+        # Event Insight Tab
         Button(
             tabs,
-            text = "Page3",
-            command = lambda : self.showFrame(Page3)
-        ).grid(row = 0, column = 2, sticky = "nes", padx = 10, pady = 10)
+            text="Event Insight",
+            command=lambda: self.showFrame(EventInsight)
+        ).grid(row=0, column=2, sticky="nes", padx=10, pady=10)
 
 
         # Tabs
         self.frames = {}
 
-        #initalize all tabs
-        for F in (StartPage, Page1, Page2, Page3): #order pages with init page first
+        # initalize all tabs
+        for F in (StartPage, Ranking, Matches, EventInsight):  # order pages with init page first
             page = F(container, self)
 
             self.frames[F] = page
@@ -143,8 +135,10 @@ class StartPage(Frame):
             command = updateYear
         ).grid(row = 1, column = 0, sticky = 'n')
 
-# Overall Event Information
-class Page1(Frame):
+
+# Ranking Information
+class Ranking(Frame):
+    eventID = int
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -168,42 +162,49 @@ class Page1(Frame):
             command = lambda : print("nice")
         ).grid(row = 0, column = 0, sticky = "se", padx = 10, pady = 10)
 
-# Team specific information
-class Page2(Frame):
+
+# Match information
+class Matches(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
         f = Frame(self)
         f.grid(row=0, column=0)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
 
         # intro text for init tab
-        page1Text = "annother one?!?!?!"
+        MatchesText = "Matches Information"
 
         # create label
         Label(
             self,
-            text = page1Text
-        ).grid(row = 0, column = 0, sticky = 'nsew')
+            text=MatchesText
+        ).grid(row=0, column=0, sticky='n')
 
-# Team match information from a specific year
-class Page3(Frame):
+
+# Event Insight
+class EventInsight(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
 
         f = Frame(self)
         f.grid(row=0, column=0)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
 
         # intro text for init tab
-        page1Text = "THERE'S MORE"
+        EventInsightText = "Event Insight Tab"
 
         # create label
         Label(
             self,
-            text = page1Text
-        ).grid(row = 0, column = 0, sticky = 'nsew')
-        
+            text=EventInsightText
+        ).grid(row=0, column=0, sticky='n')
+
+
 # Data functions
 def getValidYears():
     validYears = []
