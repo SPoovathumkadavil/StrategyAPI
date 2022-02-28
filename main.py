@@ -14,6 +14,8 @@ the pages are as follows:
 all of these will be exported to csv (or excel) files or possibly viewed within the application
 
 Needs:
+ - HEE HEE HEE HAW
+ - Work
  - Get event, team, and match info and export it to a csv
  - Simple and functional interface
  - Exported as a .exe (for familiar ease of use)
@@ -29,11 +31,21 @@ Wants:
  - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
 '''
 
+
+__author__ = "Riley Carter"
+__credits__ = "Riley Carter"
+__license__ = "FRC4500"
+__maintainer__ = "Riley Carter"
+__status__ = "Development"
+__version__ = "0.0.1"
+
+
 from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
 
 year = int
+
 
 class StratUI(Tk):
 
@@ -44,27 +56,27 @@ class StratUI(Tk):
         self.geometry("400x400")
         self.title("StrategyAPI")
 
-        #create container
-        container = Frame(self, bg = 'blue')
+        # create container
+        container = Frame(self, bg='blue')
         container.pack(
             side="top",
             fill="both",
             expand=True
         )
 
-        container.grid_rowconfigure(0, weight = 0) # weight 0 means it just takes up only necessary space at the top
-        container.grid_rowconfigure(1, weight = 1)
-        container.grid_columnconfigure(0, weight = 1)
+        container.grid_rowconfigure(0, weight=0)  # weight 0 means it just takes up only necessary space at the top
+        container.grid_rowconfigure(1, weight=1)
+        container.grid_columnconfigure(0, weight=1)
 
         # General GUI
         # this is GUI that is always on screen regardless of tab
-        tabs = Frame(container, bg = 'Black') # tab selection button container
-        tabs.pack(side = "top",fill = "both",expand = True)
-        tabs.grid(row = 0, sticky = "nsew")
-        tabs.grid_columnconfigure(0, weight = 1)
-        tabs.grid_columnconfigure(1, weight = 1)
-        tabs.grid_columnconfigure(2, weight = 1)
-        tabs.grid_rowconfigure(0, weight = 1)
+        tabs = Frame(container, bg='Black')  # tab selection button container
+        tabs.pack(side="top", fill="both", expand=True)
+        tabs.grid(row=0, sticky="nsew")
+        tabs.grid_columnconfigure(0, weight=1)
+        tabs.grid_columnconfigure(1, weight=1)
+        tabs.grid_columnconfigure(2, weight=1)
+        tabs.grid_rowconfigure(0, weight=1)
 
         # Ranking tab
         Button(
@@ -84,7 +96,6 @@ class StratUI(Tk):
             text="Event Insight",
             command=lambda: self.showFrame(EventInsight)
         ).grid(row=0, column=2, sticky="nes", padx=10, pady=10)
-
 
         # Tabs
         self.frames = {}
@@ -109,20 +120,20 @@ class StartPage(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.grid_columnconfigure(0, weight = 1)
-        self.grid_rowconfigure(0, weight = 1)
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
 
         f = Frame(self)
-        f.grid(row = 0, column = 0, sticky = 'nsew')
-        f.pack(side = "top",fill = "both",expand = True)
-        f.grid_columnconfigure(0, weight = 1)
-        f.grid_rowconfigure(1, weight = 1)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(1, weight=1)
 
         # create label
         Label(
             f,
-            text = "Hello! Welcome to StrategyAPI!\nTo Begin, Select a Year"
-        ).grid(row = 0, column = 0, sticky = 'n')
+            text="Hello! Welcome to StrategyAPI!\nTo Begin, Select a Year"
+        ).grid(row=0, column=0, sticky='n')
 
         # create year pick dropdown menu
         option = StringVar()
@@ -132,8 +143,8 @@ class StartPage(Frame):
             f,
             option,
             *validYears,
-            command = updateYear
-        ).grid(row = 1, column = 0, sticky = 'n')
+            command=updateYear
+        ).grid(row=1, column=0, sticky='n')
 
 
 # Ranking Information
@@ -142,25 +153,49 @@ class Ranking(Frame):
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
-        self.grid(row = 0, column = 0, sticky = 'nsew')
+        self.grid(row=0, column=0, sticky='nsew')
 
         # init frame
         f = Frame(self)
-        f.grid(row = 0, column = 0, sticky = 'nsew')
-        f.pack(side = "top",fill = "both",expand = True)
-        f.grid_columnconfigure(0, weight = 1)
-        f.grid_rowconfigure(0, weight = 1)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
 
         # create label
         Label(f,
-            text = "Overall Event Information"
-        ).grid(row = 0, column = 0, sticky = 'nsew')
+              text="Ranking Information Tab"
+              ).grid(row=0, column=0, sticky='n')
+
+        # Event List
+        eventList = Frame(f)
+        eventList.grid(row = 0, column = 0,sticky = 'nws')
+        events = getEvents(year)
+        eventNames = events.keys()
+        for i in range(len(events.keys())):
+            eventName = eventNames[i]
+            if i != len(events):
+                eventList.grid_rowconfigure(i, weight=0)
+                Button(
+                    eventList,
+                    text = eventName,
+                    command = lambda: self.setEventID(self, events[eventName])
+                )
+            else:
+                eventList.grid_rowconfigure(i, weight=1)
+
+        # Competition Toggle
+
+        # Simple toggle
 
         # run button
         Button(f,
-            text = "Run",
-            command = lambda : print("nice")
-        ).grid(row = 0, column = 0, sticky = "se", padx = 10, pady = 10)
+               text="Run",
+               command=lambda: print("nice")
+               ).grid(row=0, column=0, sticky="se", padx=10, pady=10)
+
+    def setEventID(self, id):
+        self.eventID = id
 
 
 # Match information
@@ -212,9 +247,11 @@ def getValidYears():
         validYears.append(i)
     return validYears
 
+
 def updateYear(choice):
     global year
     year = int(choice)
+
 
 # !!! TESTING USER INPUT AND STUFF !!!
 '''
