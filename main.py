@@ -44,7 +44,7 @@ from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
 
-year = int
+year = str(datetime.today().year)
 
 
 class StratUI(Tk):
@@ -152,6 +152,7 @@ class Ranking(Frame):
     eventID = int
 
     def __init__(self, parent, controller):
+        global year
         Frame.__init__(self, parent)
         self.grid(row=0, column=0, sticky='nsew')
 
@@ -160,7 +161,8 @@ class Ranking(Frame):
         f.grid(row=0, column=0, sticky='nsew')
         f.pack(side="top", fill="both", expand=True)
         f.grid_columnconfigure(0, weight=1)
-        f.grid_rowconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=0)
+        f.grid_rowconfigure(1, weight=1)
 
         # create label
         Label(f,
@@ -169,10 +171,11 @@ class Ranking(Frame):
 
         # Event List
         eventList = Frame(f)
-        eventList.grid(row = 0, column = 0,sticky = 'nws')
+        eventList.grid(row = 1, column = 0,sticky = 'nws')
         events = getEvents(year)
-        eventNames = events.keys()
-        for i in range(len(events.keys())):
+        eventNames = list(events.keys())
+
+        for i in range(len(eventNames)):
             eventName = eventNames[i]
             if i != len(events):
                 eventList.grid_rowconfigure(i, weight=0)
@@ -180,8 +183,14 @@ class Ranking(Frame):
                     eventList,
                     text = eventName,
                     command = lambda: self.setEventID(self, events[eventName])
-                )
+                ).grid(row = i, column = 0, sticky = 'n')
             else:
+                eventList.grid_rowconfigure(i, weight=0)
+                Button(
+                    eventList,
+                    text=eventName,
+                    command=lambda: self.setEventID(self, events[eventName])
+                ).grid(row=i, column=0, sticky='n')
                 eventList.grid_rowconfigure(i, weight=1)
 
         # Competition Toggle
