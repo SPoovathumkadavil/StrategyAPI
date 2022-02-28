@@ -114,10 +114,6 @@ class StratUI(Tk):
 
 
 class StartPage(Frame):
-    # Stuff on this page:
-    #  - Welcome message and explenation
-    #  - Settings and credit buttons
-    #  - Quit button
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -149,10 +145,6 @@ class StartPage(Frame):
 
 # Overall Event Information
 class Page1(Frame):
-    # Stuff on this page:
-    #  - event key input (maybe event name to event key?)
-    #  - whatever that bool value is as a check box?
-    #  - Sal pls halp
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -178,8 +170,6 @@ class Page1(Frame):
 
 # Team specific information
 class Page2(Frame):
-    # Stuff on this page:
-    #  - Sal pls halp pls :smile:
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -198,8 +188,6 @@ class Page2(Frame):
 
 # Team match information from a specific year
 class Page3(Frame):
-    # Stuff on this page:
-    #  - ahhhhhhhh
 
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
