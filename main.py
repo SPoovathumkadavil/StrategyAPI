@@ -1,8 +1,4 @@
-#!usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
-'''
+"""
 This is the main GUI
 it will include multiple pages with a simple and usable interface
 these pages will include drop down menus and possibly search features in order to improve usability
@@ -29,8 +25,7 @@ Wants:
  - viewing information from the application
  - searching for information from the application
  - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
-'''
-
+"""
 
 __author__ = "Riley Carter"
 __credits__ = "Riley Carter"
@@ -39,10 +34,10 @@ __maintainer__ = "Riley Carter"
 __status__ = "Development"
 __version__ = "0.0.1"
 
-
 from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
+# from RankingPage import *
 
 year = str(datetime.today().year)
 
@@ -100,7 +95,7 @@ class StratUI(Tk):
         # Tabs
         self.frames = {}
 
-        # initalize all tabs
+        # initialize all tabs
         for F in (StartPage, Ranking, Matches, EventInsight):  # order pages with init page first
             page = F(container, self)
 
@@ -149,10 +144,12 @@ class StartPage(Frame):
 
 # Ranking Information
 class Ranking(Frame):
-    eventID = int
 
     def __init__(self, parent, controller):
+        self.eventID = None
         global year
+
+        # init self as frame
         Frame.__init__(self, parent)
         self.grid(row=0, column=0, sticky='nsew')
 
@@ -169,52 +166,52 @@ class Ranking(Frame):
               text="Ranking Information Tab"
               ).grid(row=0, columnspan=2, sticky='n')
 
-        # Event List
+        # Event List TODO make this its own separate object
         # init canvas frame
         eventCanvasFrame = Frame(f)
-        eventCanvasFrame.grid(row = 1, column = 0,sticky = 'nsew', padx=10, pady=10)
+        eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
         eventCanvasFrame.grid_rowconfigure(0, weight=1)
         eventCanvasFrame.grid_columnconfigure(0, weight=1)
 
         # init canvas (for scroll bar)
         eventCanvas = Canvas(eventCanvasFrame)
-        eventCanvas.grid(row = 0, column = 0, sticky = "nsew")
+        eventCanvas.grid(row=0, column=0, sticky="nsew")
 
-        #init scroll bar
-        scrollBar = Scrollbar(eventCanvasFrame, orient = 'vertical', command = eventCanvas.yview)
+        # init scroll bar
+        scrollBar = Scrollbar(eventCanvasFrame, orient='vertical', command=eventCanvas.yview)
         scrollBar.grid(row=0, column=1, sticky='ns')
         eventCanvas.configure(yscrollcommand=scrollBar.set)
 
-        #init selection frame
+        # init selection frame
         eventFrame = Frame(eventCanvas)
         eventFrame.grid(row=0, column=0, sticky='nsew')
         eventCanvas.create_window((0, 0), window=eventFrame, anchor='nw')
 
-        #get events and names
+        # get events and names
         events = getEvents(year)
-        eventNames = list(events.keys()) #TODO sort
+        eventNames = list(events.keys())  # TODO sort alpha
 
-        #event button list container
+        # event button list container
         eventButtons = []
-
+        # TODO update year on year change/page open
         for i in range(len(eventNames)):
             button = Button(
                 eventFrame,
-                text = eventNames[i],
-                command = lambda: self.setEventID(events[eventNames[i]])
+                text=eventNames[i],
+                command=lambda: self.setEventID(events[eventNames[i]])
             )
-            button.grid(row = i, column = 0, sticky = 'w')
+            button.grid(row=i, column=0, sticky='w')
             eventButtons.append(button)
 
-        #set canvas scroll region
+        # set canvas scroll region
         eventFrame.bind("<Configure>", lambda event, canvas=eventCanvas: self.onFrameConfigure(canvas))
 
-
         # Competition Toggle
-        competition = False
+        self.competition = False
         isComp = BooleanVar()
-        compCheck = Checkbutton(f, text= "Competition", variable = isComp, onvalue=True, offvalue=False, command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1,column=1,sticky='nw')
+        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+                                command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=1, column=1, sticky='nw')
 
         # Simple toggle
 
@@ -235,7 +232,7 @@ class Ranking(Frame):
         canvas.config(scrollregion=canvas.bbox("all"))
 
     def runRankingInfo(self):
-        print("Competition: " + self.competition)
+        print("Competition: " + str(self.competition))
         print("Event ID:" + self.eventID)
 
 
@@ -292,6 +289,8 @@ def getValidYears():
 def updateYear(choice):
     global year
     year = int(choice)
+    Ranking.updateYear(year)
+    # TODO update events
 
 
 # !!! TESTING USER INPUT AND STUFF !!!
@@ -305,31 +304,6 @@ def testCommand(text):
 
 testButton = Button(canvas1,text = "Test",command= lambda: testCommand(userIn.get()))
 canvas1.create_window(200,190, window = testButton)
-
-
-# - drop down menu sample
-actions = ['update event info(get team information for specific events)',
-           'update information for teams we will compete in the 2022 season(regional teams)',
-           'get team match information from a specific year.(WARNING too much info)']
-           #no im not putting these actions in a drop down menu, just for testing
-
-label = Label(root, text = "wat dis")
-label.pack()
-
-def updateLabel(choice):
-    label.config( text = choice )
-
-variable= StringVar()
-variable.set(actions[0])
-
-#create drop down menu
-drop = OptionMenu(
-    root, 
-    variable, 
-    *actions,
-    command = updateLabel #gives 1 "choice" argument to command, is the value from the given list
-)
-drop.pack(expand = True)
 '''
 
 # Mainloop
