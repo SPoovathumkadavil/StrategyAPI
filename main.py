@@ -31,14 +31,12 @@ Wants:
  - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
 '''
 
-
 __author__ = "Riley Carter"
 __credits__ = "Riley Carter"
 __license__ = "FRC4500"
 __maintainer__ = "Riley Carter"
 __status__ = "Development"
 __version__ = "0.0.1"
-
 
 from datetime import datetime
 from TBAFunctions import *
@@ -175,44 +173,82 @@ class Ranking(Frame):
         # create label
         Label(f,
               text="Ranking Information Tab"
-              ).grid(row=0, column=0, sticky='n')
+              ).grid(row=0, columnspan=2, sticky='n')
 
         # Event List
-        eventList = Frame(f)
-        eventList.grid(row = 1, column = 0,sticky = 'nws')
-        events = getEvents(year)
-        eventNames = list(events.keys())
+        # init canvas frame
+        eventCanvasFrame = Frame(f)
+        eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
+        eventCanvasFrame.grid_rowconfigure(0, weight=1)
+        eventCanvasFrame.grid_columnconfigure(0, weight=1)
 
-        for i in range(len(eventNames)):
-            eventName = eventNames[i]
-            if i != len(events):
-                eventList.grid_rowconfigure(i, weight=0)
-                Button(
-                    eventList,
-                    text = eventName,
-                    command = lambda: self.setEventID(self, events[eventName])
-                ).grid(row = i, column = 0, sticky = 'n')
-            else:
-                eventList.grid_rowconfigure(i, weight=0)
-                Button(
-                    eventList,
-                    text=eventName,
-                    command=lambda: self.setEventID(self, events[eventName])
-                ).grid(row=i, column=0, sticky='n')
-                eventList.grid_rowconfigure(i, weight=1)
+        # init canvas (for scroll bar)
+        eventCanvas = Canvas(eventCanvasFrame)
+        eventCanvas.grid(row=0, column=0, sticky="nsew")
+
+        # init scroll bar
+        scrollBar = Scrollbar(eventCanvasFrame, orient='vertical', command=eventCanvas.yview)
+        scrollBar.grid(row=0, column=1, sticky='ns')
+        eventCanvas.configure(yscrollcommand=scrollBar.set)
+
+        # init selection frame
+        eventFrame = Frame(eventCanvas)
+        eventFrame.grid(row=0, column=0, sticky='nsew')
+        eventCanvas.create_window((0, 0), window=eventFrame, anchor='nw')
+
+        self.updateEvents()
+
+        # set canvas scroll region
+        eventFrame.bind("<Configure>", lambda event, canvas=eventCanvas: self.onFrameConfigure(canvas))
 
         # Competition Toggle
+        competition = False
+        isComp = BooleanVar()
+        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+                                command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=1, column=1, sticky='nw')
 
         # Simple toggle
 
         # run button
         Button(f,
                text="Run",
-               command=lambda: print("nice")
-               ).grid(row=0, column=0, sticky="se", padx=10, pady=10)
+               command=lambda: self.runRankingInfo()
+               ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
 
+    # TODO: - make setEventID change color of button so user can see selected
     def setEventID(self, id):
         self.eventID = id
+
+    def updateEvents(self):
+        global year
+        # TODO update event
+        # get events and names
+        events = getEvents(year)
+        eventNames = list(events.keys())  # TODO sort
+
+        # event button list container
+        eventButtons = []
+
+        for i in range(len(eventNames)):
+            button = Button(
+                self.eventFrame,
+                text=eventNames[i],
+                command=lambda: self.setEventID(events[eventNames[i]])
+            )
+            button.grid(row=i, column=0, sticky='w')
+            eventButtons.append(button)
+
+
+    def updateCompetition(self, isComp):
+        self.competition = isComp.get()
+
+    def onFrameConfigure(self, canvas):
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+    def runRankingInfo(self):
+        print("Competition: " + self.competition)
+        print("Event ID:" + self.eventID)
 
 
 # Match information
@@ -281,31 +317,6 @@ def testCommand(text):
 
 testButton = Button(canvas1,text = "Test",command= lambda: testCommand(userIn.get()))
 canvas1.create_window(200,190, window = testButton)
-
-
-# - drop down menu sample
-actions = ['update event info(get team information for specific events)',
-           'update information for teams we will compete in the 2022 season(regional teams)',
-           'get team match information from a specific year.(WARNING too much info)']
-           #no im not putting these actions in a drop down menu, just for testing
-
-label = Label(root, text = "wat dis")
-label.pack()
-
-def updateLabel(choice):
-    label.config( text = choice )
-
-variable= StringVar()
-variable.set(actions[0])
-
-#create drop down menu
-drop = OptionMenu(
-    root, 
-    variable, 
-    *actions,
-    command = updateLabel #gives 1 "choice" argument to command, is the value from the given list
-)
-drop.pack(expand = True)
 '''
 
 # Mainloop
