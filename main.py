@@ -167,7 +167,7 @@ class Ranking(Frame):
         # create label
         Label(f,
               text="Ranking Information Tab"
-              ).grid(row=0, column=0, sticky='n')
+              ).grid(row=0, columnspan=2, sticky='n')
 
         # Event List
         # init canvas frame
@@ -211,21 +211,32 @@ class Ranking(Frame):
 
 
         # Competition Toggle
+        competition = False
+        isComp = BooleanVar()
+        compCheck = Checkbutton(f, text= "Competition", variable = isComp, onvalue=True, offvalue=False, command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=1,column=1,sticky='nw')
 
         # Simple toggle
 
         # run button
         Button(f,
                text="Run",
-               command=lambda: print("nice")
-               ).grid(row=0, column=0, sticky="se", padx=10, pady=10)
+               command=lambda: self.runRankingInfo()
+               ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
 
     # TODO: - make setEventID change color of button so user can see selected
     def setEventID(self, id):
         self.eventID = id
 
+    def updateCompetition(self, isComp):
+        self.competition = isComp.get()
+
     def onFrameConfigure(self, canvas):
         canvas.config(scrollregion=canvas.bbox("all"))
+
+    def runRankingInfo(self):
+        print("Competition: " + self.competition)
+        print("Event ID:" + self.eventID)
 
 
 # Match information
