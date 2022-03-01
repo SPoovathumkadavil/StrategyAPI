@@ -72,30 +72,38 @@ class StratUI(Tk):
         # this is GUI that is always on screen regardless of tab
         tabs = Frame(container, bg='Black')  # tab selection button container
         tabs.pack(side="top", fill="both", expand=True)
-        tabs.grid(row=0, sticky="nsew")
+        tabs.grid(row=0, sticky="new")
         tabs.grid_columnconfigure(0, weight=1)
         tabs.grid_columnconfigure(1, weight=1)
         tabs.grid_columnconfigure(2, weight=1)
+        tabs.grid_columnconfigure(3, weight=1)
         tabs.grid_rowconfigure(0, weight=1)
+
+        # Home tab
+        Button(
+            tabs,
+            text = "Home",
+            command = lambda: self.showFrame(StartPage)
+        ).grid(row = 0, column = 0, sticky = "new", padx = 10, pady = 10)
 
         # Ranking tab
         Button(
             tabs,
             text="Ranking",
             command=lambda: self.showFrame(Ranking)
-        ).grid(row=0, column=0, sticky="nws", padx=10, pady=10)
+        ).grid(row=0, column=1, sticky="new", padx=10, pady=10)
         # Matches tab
         Button(
             tabs,
             text="Matches",
             command=lambda: self.showFrame(Matches)
-        ).grid(row=0, column=1, sticky="ns", padx=10, pady=10)
+        ).grid(row=0, column=2, sticky="new", padx=10, pady=10)
         # Event Insight Tab
         Button(
             tabs,
             text="Event Insight",
             command=lambda: self.showFrame(EventInsight)
-        ).grid(row=0, column=2, sticky="nes", padx=10, pady=10)
+        ).grid(row=0, column=3, sticky="new", padx=10, pady=10)
 
         # Tabs
         self.frames = {}
