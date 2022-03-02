@@ -169,32 +169,32 @@ class Ranking(Frame):
 
         # Event List
         # init canvas frame
-        eventCanvasFrame = Frame(f)
-        eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
-        eventCanvasFrame.grid_rowconfigure(0, weight=1)
-        eventCanvasFrame.grid_columnconfigure(0, weight=1)
+        self.eventCanvasFrame = Frame(f)
+        self.eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
+        self.eventCanvasFrame.grid_rowconfigure(0, weight=1)
+        self.eventCanvasFrame.grid_columnconfigure(0, weight=1)
 
         # init canvas (for scroll bar)
-        eventCanvas = Canvas(eventCanvasFrame)
-        eventCanvas.grid(row=0, column=0, sticky="nsew")
+        self.eventCanvas = Canvas(self.eventCanvasFrame)
+        self.eventCanvas.grid(row=0, column=0, sticky="nsew")
 
         # init scroll bar
-        scrollBar = Scrollbar(eventCanvasFrame, orient='vertical', command=eventCanvas.yview)
+        scrollBar = Scrollbar(self.eventCanvasFrame, orient='vertical', command=self.eventCanvas.yview)
         scrollBar.grid(row=0, column=1, sticky='ns')
-        eventCanvas.configure(yscrollcommand=scrollBar.set)
+        self.eventCanvas.configure(yscrollcommand=scrollBar.set)
 
         # init selection frame
-        eventFrame = Frame(eventCanvas)
-        eventFrame.grid(row=0, column=0, sticky='nsew')
-        eventCanvas.create_window((0, 0), window=eventFrame, anchor='nw')
+        self.eventFrame = Frame(self.eventCanvas)
+        self.eventFrame.grid(row=0, column=0, sticky='nsew')
+        self.eventCanvas.create_window((0, 0), window=self.eventFrame, anchor='nw')
 
         self.updateEvents()
 
         # set canvas scroll region
-        eventFrame.bind("<Configure>", lambda event, canvas=eventCanvas: self.onFrameConfigure(canvas))
+        self.eventFrame.bind("<Configure>", lambda event, canvas=self.eventCanvas: self.onFrameConfigure(canvas))
 
         # Competition Toggle
-        competition = False
+        self.competition = False
         isComp = BooleanVar()
         compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
                                 command=lambda: self.updateCompetition(isComp))
@@ -239,7 +239,10 @@ class Ranking(Frame):
         canvas.config(scrollregion=canvas.bbox("all"))
 
     def runRankingInfo(self):
-        print("Competition: " + self.competition)
+        if self.competition:
+            print("Competition is true")
+        else:
+            print("competition is false")
         print("Event ID:" + self.eventID)
 
 
