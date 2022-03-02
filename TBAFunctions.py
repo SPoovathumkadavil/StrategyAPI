@@ -936,6 +936,7 @@ def get_insight(event_key=False, type=False):
             return 1
     return
 
+
 # Get a list of events
 def getEvents(year):
     eventNamesAndIDS = {}
@@ -943,6 +944,3 @@ def getEvents(year):
     for event in events:
         eventNamesAndIDS[event['name']] = event['key']
     return eventNamesAndIDS
-
-
-
