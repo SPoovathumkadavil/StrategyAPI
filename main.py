@@ -120,7 +120,7 @@ class StratUI(Tk):
         page.tkraise()
 
     def updateFrames(self):
-        self.frames[Ranking].updateEvents()
+        self.frames[Ranking].eventScrollable.updateEvents()
 
 
 class StartPage(Frame):
@@ -156,7 +156,6 @@ class StartPage(Frame):
 
 # Ranking Information
 class Ranking(Frame):
-
     def __init__(self, parent, controller):
         self.eventID = int
         global year
@@ -176,13 +175,109 @@ class Ranking(Frame):
               text="Ranking Information Tab"
               ).grid(row=0, columnspan=2, sticky='n')
 
+        # init event Scrollable
+        self.eventScrollable = EventScrollable(f, self)
+
+        # Competition Toggle
+        self.competition = False
+        isComp = BooleanVar()
+        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+                                command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=1, column=1, sticky='nw')
+
+        # Simple toggle
+
+        # run button
+        Button(f,
+               text="Run",
+               command=lambda: self.runRankingInfo()
+               ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
+
+    def runRankingInfo(self):
+        if self.competition:
+            print("Competition is true")
+        else:
+            print("competition is false")
+        print("Event ID:" + self.eventScrollable.eventID)
+
+
+# Match information
+class Matches(Frame):
+
+    def __init__(self, parent, controller):
+        self.eventID = int
+        global year
+        Frame.__init__(self, parent)
+        self.grid(row=0, column=0, sticky='nsew')
+
+        # init frame
+        f = Frame(self)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=0)
+        f.grid_rowconfigure(1, weight=1)
+
+        # intro text for init tab
+        MatchesText = "Matches Information"
+
+        # create label
+        Label(
+            f,
+            text=MatchesText
+        ).grid(row=0, columnspan=2, sticky='n')
+
+        # init scrollable event frame
+        self.eventScrollable = EventScrollable(f, self)
+
+        # init scrollable teams list
+        self.teamsScrollable = TeamsScrollable(f, self)
+
+        # Competition Toggle
+        self.competition = False
+        isComp = BooleanVar()
+        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+                                command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=1, column=1, sticky='nw')
+
+    def updateCompetition(self, isComp):
+        self.competition = isComp.get()
+
+
+# Event Insight
+class EventInsight(Frame):
+
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+
+        f = Frame(self)
+        f.grid(row=0, column=0)
+        f.grid_columnconfigure(0, weight=1)
+        f.grid_rowconfigure(0, weight=1)
+
+        # intro text for init tab
+        EventInsightText = "Event Insight Tab"
+
+        # create label
+        Label(
+            self,
+            text=EventInsightText
+        ).grid(row=0, column=0, sticky='n')
+
+
+class EventScrollable(Frame):
+    def __init__(self, parent, controller):
+        global year
+        Frame.__init__(self, parent)
         # Event List
         # TODO make this scrollable inside canvas
         # init canvas frame
-        self.eventCanvasFrame = Frame(f)
+        self.eventCanvasFrame = Frame(parent)
         self.eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
         self.eventCanvasFrame.grid_rowconfigure(0, weight=1)
         self.eventCanvasFrame.grid_columnconfigure(0, weight=1)
+        self.eventCanvasFrame.grid_columnconfigure(1, weight=1)
+
 
         # init canvas (for scroll bar)
         self.eventCanvas = Canvas(self.eventCanvasFrame)
@@ -203,21 +298,6 @@ class Ranking(Frame):
         # set canvas scroll region
         self.eventFrame.bind("<Configure>", lambda event, canvas=self.eventCanvas: self.onFrameConfigure(canvas))
 
-        # Competition Toggle
-        self.competition = False
-        isComp = BooleanVar()
-        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
-                                command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1, column=1, sticky='nw')
-
-        # Simple toggle
-
-        # run button
-        Button(f,
-               text="Run",
-               command=lambda: self.runRankingInfo()
-               ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
-
     def setEventID(self, eventID, buttonIndex):
         self.eventID = eventID
         try:
@@ -226,7 +306,6 @@ class Ranking(Frame):
             pass
         self.lastClicked = self.eventButtons[buttonIndex]
         self.lastClicked.configure(bg="green")
-
 
     def updateEvents(self):
         global year
@@ -251,69 +330,80 @@ class Ranking(Frame):
             button.grid(row=i, column=0, sticky='w')
             self.eventButtons.append(button)
 
-    def updateCompetition(self, isComp):
-        self.competition = isComp.get()
+    def onFrameConfigure(self, canvas):
+        canvas.config(scrollregion=canvas.bbox("all"))
+
+
+class TeamsScrollable(Frame):
+    def __init__(self, parent, controller):
+        global year
+        Frame.__init__(self, parent)
+        # Event List
+        # TODO make this scrollable inside canvas
+        # init canvas frame
+        self.teamCanvasFrame = Frame(parent)
+        self.teamCanvasFrame.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.teamCanvasFrame.grid_rowconfigure(0, weight=1)
+        self.teamCanvasFrame.grid_columnconfigure(0, weight=1)
+
+        # init canvas (for scroll bar)
+        self.teamCanvas = Canvas(self.teamCanvasFrame)
+        self.teamCanvas.grid(row=0, column=0, sticky="nsw")
+
+        # init scroll bar
+        scrollBar = Scrollbar(self.teamCanvasFrame, orient='vertical', command=self.teamCanvas.yview)
+        scrollBar.grid(row=0, column=1, sticky='ns')
+        self.teamCanvas.configure(yscrollcommand=scrollBar.set)
+
+        # init selection frame
+        self.teamFrame = Frame(self.teamCanvas)
+        self.teamFrame.grid(row=0, column=0, sticky='nsew')
+        self.teamCanvas.create_window((0, 0), window=self.teamFrame, anchor='nw')
+
+        self.updateTeams()  # update event list on init
+
+        # set canvas scroll region
+        self.teamFrame.bind("<Configure>", lambda event, canvas=self.teamCanvas: self.onFrameConfigure(canvas))
+
+    def setTeamNumber(self, teamNumber, buttonIndex):
+        self.teamNumber = teamNumber
+        try:
+            self.lastClicked.configure(bg="white")  # TODO make @self.buttonColor
+        except AttributeError:
+            pass
+        self.lastClicked = self.teamButtons[buttonIndex]
+        self.lastClicked.configure(bg="green")
+
+    def updateTeams(self):
+        global year
+        # TODO update event
+        # get events and names
+        teams = COMPETITION_TEAMS
+
+        # event button list container
+        self.teamButtons = []
+
+        for i in range(len(teams)):
+            button = Button(
+                self.teamFrame,
+                text=str(teams[i]),
+                command=lambda i=i: self.setTeamNumber(teams[i], i)
+            )
+            button.grid(row=i, column=0, sticky='w')
+            self.teamButtons.append(button)
 
     def onFrameConfigure(self, canvas):
         canvas.config(scrollregion=canvas.bbox("all"))
 
-    def runRankingInfo(self):
-        if self.competition:
-            print("Competition is true")
-        else:
-            print("competition is false")
-        print("Event ID:" + self.eventID)
 
 
-# Match information
-class Matches(Frame):
-
-    def __init__(self, parent, controller):
-        Frame.__init__(self, parent)
-
-        f = Frame(self)
-        f.grid(row=0, column=0)
-        f.grid_columnconfigure(0, weight=1)
-        f.grid_rowconfigure(0, weight=1)
-
-        # intro text for init tab
-        MatchesText = "Matches Information"
-
-        # create label
-        Label(
-            self,
-            text=MatchesText
-        ).grid(row=0, column=0, sticky='n')
-
-
-# Event Insight
-class EventInsight(Frame):
-
-    def __init__(self, parent, controller):
-        Frame.__init__(self, parent)
-
-        f = Frame(self)
-        f.grid(row=0, column=0)
-        f.grid_columnconfigure(0, weight=1)
-        f.grid_rowconfigure(0, weight=1)
-
-        # intro text for init tab
-        EventInsightText = "Event Insight Tab"
-
-        # create label
-        Label(
-            self,
-            text=EventInsightText
-        ).grid(row=0, column=0, sticky='n')
-
-
-# Data functions
 def getValidYears():
     validYears = []
     for i in range(1991, datetime.today().year + 1):
         validYears.append(i)
     validYears.sort(reverse=True)
     return validYears
+# Data functions
 
 
 def updateYear(choice):
