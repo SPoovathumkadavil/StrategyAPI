@@ -70,38 +70,35 @@ class StratUI(Tk):
         # this is GUI that is always on screen regardless of tab
         tabs = Frame(container, bg='Black')  # tab selection button container
         tabs.pack(side="top", fill="both", expand=True)
-        tabs.grid(row=0, sticky="new")
+        tabs.grid(row=0, sticky="nsew")
         tabs.grid_columnconfigure(0, weight=1)
         tabs.grid_columnconfigure(1, weight=1)
         tabs.grid_columnconfigure(2, weight=1)
-        tabs.grid_columnconfigure(3, weight=1)
         tabs.grid_rowconfigure(0, weight=1)
-
-        # Home tab
-        Button(
-            tabs,
-            text = "Home",
-            command = lambda: self.showFrame(StartPage)
-        ).grid(row = 0, column = 0, sticky = "new", padx = 10, pady = 10)
 
         # Ranking tab
         Button(
             tabs,
+            text="Home",
+            command=lambda: self.showFrame(StartPage)
+        ).grid(row=0, column=0, sticky="nwe", padx=10, pady=10)
+        Button(
+            tabs,
             text="Ranking",
             command=lambda: self.showFrame(Ranking)
-        ).grid(row=0, column=1, sticky="new", padx=10, pady=10)
+        ).grid(row=0, column=1, sticky="nwe", padx=10, pady=10)
         # Matches tab
         Button(
             tabs,
             text="Matches",
             command=lambda: self.showFrame(Matches)
-        ).grid(row=0, column=2, sticky="new", padx=10, pady=10)
+        ).grid(row=0, column=2, sticky="nwe", padx=10, pady=10)
         # Event Insight Tab
         Button(
             tabs,
             text="Event Insight",
             command=lambda: self.showFrame(EventInsight)
-        ).grid(row=0, column=3, sticky="new", padx=10, pady=10)
+        ).grid(row=0, column=3, sticky="nwe", padx=10, pady=10)
 
         # Tabs
         self.frames = {}
@@ -118,8 +115,12 @@ class StratUI(Tk):
 
     # display current frame
     def showFrame(self, cont):
+        self.updateFrames()
         page = self.frames[cont]
         page.tkraise()
+
+    def updateFrames(self):
+        self.frames[Ranking].updateEvents()
 
 
 class StartPage(Frame):
@@ -155,9 +156,9 @@ class StartPage(Frame):
 
 # Ranking Information
 class Ranking(Frame):
-    eventID = int
 
     def __init__(self, parent, controller):
+        self.eventID = int
         global year
         Frame.__init__(self, parent)
         self.grid(row=0, column=0, sticky='nsew')
@@ -176,6 +177,7 @@ class Ranking(Frame):
               ).grid(row=0, columnspan=2, sticky='n')
 
         # Event List
+        # TODO make this scrollable inside canvas
         # init canvas frame
         self.eventCanvasFrame = Frame(f)
         self.eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
@@ -196,7 +198,7 @@ class Ranking(Frame):
         self.eventFrame.grid(row=0, column=0, sticky='nsew')
         self.eventCanvas.create_window((0, 0), window=self.eventFrame, anchor='nw')
 
-        self.updateEvents()
+        self.updateEvents()  # update event list on init
 
         # set canvas scroll region
         self.eventFrame.bind("<Configure>", lambda event, canvas=self.eventCanvas: self.onFrameConfigure(canvas))
@@ -216,9 +218,15 @@ class Ranking(Frame):
                command=lambda: self.runRankingInfo()
                ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
 
-    # TODO: - make setEventID change color of button so user can see selected
-    def setEventID(self, id):
-        self.eventID = id
+    def setEventID(self, eventID, buttonIndex):
+        self.eventID = eventID
+        try:
+            self.lastClicked.configure(bg="white")  # TODO make @self.buttonColor
+        except AttributeError:
+            pass
+        self.lastClicked = self.eventButtons[buttonIndex]
+        self.lastClicked.configure(bg="green")
+
 
     def updateEvents(self):
         global year
@@ -228,17 +236,20 @@ class Ranking(Frame):
         eventNames = list(events.keys())  # TODO sort
 
         # event button list container
-        eventButtons = []
+        self.eventButtons = []
+
+        # clear eventFrame
+        for button in self.eventFrame.winfo_children():
+            button.destroy()
 
         for i in range(len(eventNames)):
             button = Button(
                 self.eventFrame,
                 text=eventNames[i],
-                command=lambda: self.setEventID(events[eventNames[i]])
+                command=lambda i=i: self.setEventID(events[eventNames[i]], i)
             )
             button.grid(row=i, column=0, sticky='w')
-            eventButtons.append(button)
-
+            self.eventButtons.append(button)
 
     def updateCompetition(self, isComp):
         self.competition = isComp.get()
@@ -299,8 +310,9 @@ class EventInsight(Frame):
 # Data functions
 def getValidYears():
     validYears = []
-    for i in range(1991, datetime.today().year):
+    for i in range(1991, datetime.today().year + 1):
         validYears.append(i)
+    validYears.sort(reverse=True)
     return validYears
 
 
