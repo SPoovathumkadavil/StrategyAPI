@@ -121,7 +121,7 @@ class StratUI(Tk):
 
     def updateFrames(self):
         self.frames[Ranking].eventScrollable.updateEvents()
-
+        self.frames[Matches].eventScrollable.updateEvents()
 
 class StartPage(Frame):
 
@@ -200,6 +200,9 @@ class Ranking(Frame):
             print("competition is false")
         print("Event ID:" + self.eventScrollable.eventID)
 
+    def updateCompetition(self, isComp):
+        self.competition = isComp.get()
+
 
 # Match information
 class Matches(Frame):
@@ -215,17 +218,16 @@ class Matches(Frame):
         f.grid(row=0, column=0, sticky='nsew')
         f.pack(side="top", fill="both", expand=True)
         f.grid_columnconfigure(0, weight=1)
+        f.grid_columnconfigure(1, weight=1)
+        f.grid_columnconfigure(2, weight=1)
         f.grid_rowconfigure(0, weight=0)
         f.grid_rowconfigure(1, weight=1)
-
-        # intro text for init tab
-        MatchesText = "Matches Information"
 
         # create label
         Label(
             f,
-            text=MatchesText
-        ).grid(row=0, columnspan=2, sticky='n')
+            text="Matches Information"
+        ).grid(row=0, columnspan=3, sticky='n')
 
         # init scrollable event frame
         self.eventScrollable = EventScrollable(f, self)
@@ -238,10 +240,19 @@ class Matches(Frame):
         isComp = BooleanVar()
         compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
                                 command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1, column=1, sticky='nw')
+        compCheck.grid(row=1, column=2, sticky='nw')
+
+        Button(f,
+               text="Run",
+               command=lambda: self.runMatchInfo()
+               ).grid(row=1, column=2, sticky="se", padx=10, pady=10)
+
+    def runMatchInfo(self):
+        print('hello')
 
     def updateCompetition(self, isComp):
         self.competition = isComp.get()
+
 
 
 # Event Insight
@@ -341,14 +352,12 @@ class TeamsScrollable(Frame):
         # Event List
         # TODO make this scrollable inside canvas
         # init canvas frame
-        self.teamCanvasFrame = Frame(parent)
+        self.teamCanvasFrame = Frame(parent, bg = 'pink')
         self.teamCanvasFrame.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
-        self.teamCanvasFrame.grid_rowconfigure(0, weight=1)
-        self.teamCanvasFrame.grid_columnconfigure(0, weight=1)
 
         # init canvas (for scroll bar)
         self.teamCanvas = Canvas(self.teamCanvasFrame)
-        self.teamCanvas.grid(row=0, column=0, sticky="nsw")
+        self.teamCanvas.grid(row=0, column=0, sticky="nsew")
 
         # init scroll bar
         scrollBar = Scrollbar(self.teamCanvasFrame, orient='vertical', command=self.teamCanvas.yview)
