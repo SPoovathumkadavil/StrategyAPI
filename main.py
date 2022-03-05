@@ -38,6 +38,7 @@ __maintainer__ = "Riley Carter"
 __status__ = "Development"
 __version__ = "0.0.1"
 
+from ctypes import resize
 from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
@@ -352,12 +353,16 @@ class TeamsScrollable(Frame):
         # Event List
         # TODO make this scrollable inside canvas
         # init canvas frame
-        self.teamCanvasFrame = Frame(parent, bg = 'pink')
+        self.teamCanvasFrame = Frame(parent)
         self.teamCanvasFrame.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
+        self.teamCanvasFrame.grid_rowconfigure(0, weight=1)
+        self.teamCanvasFrame.grid_columnconfigure(1, weight=1)
+        self.teamCanvasFrame.grid_columnconfigure(2, weight=1)
+
 
         # init canvas (for scroll bar)
         self.teamCanvas = Canvas(self.teamCanvasFrame)
-        self.teamCanvas.grid(row=0, column=0, sticky="nsew")
+        self.teamCanvas.grid(row=0, column=1, sticky="nsew")
 
         # init scroll bar
         scrollBar = Scrollbar(self.teamCanvasFrame, orient='vertical', command=self.teamCanvas.yview)
@@ -369,10 +374,10 @@ class TeamsScrollable(Frame):
         self.teamFrame.grid(row=0, column=0, sticky='nsew')
         self.teamCanvas.create_window((0, 0), window=self.teamFrame, anchor='nw')
 
-        self.updateTeams()  # update event list on init
+        self.updateTeams()  # update team list on init
 
         # set canvas scroll region
-        self.teamFrame.bind("<Configure>", lambda event, canvas=self.teamCanvas: self.onFrameConfigure(canvas))
+        self.teamFrame.bind("<Configure>", lambda team, canvas=self.teamCanvas: self.onFrameConfigure(canvas))
 
     def setTeamNumber(self, teamNumber, buttonIndex):
         self.teamNumber = teamNumber
@@ -386,10 +391,10 @@ class TeamsScrollable(Frame):
     def updateTeams(self):
         global year
         # TODO update event
-        # get events and names
+        # get teams and names
         teams = COMPETITION_TEAMS
 
-        # event button list container
+        # teams button list container
         self.teamButtons = []
 
         for i in range(len(teams)):
