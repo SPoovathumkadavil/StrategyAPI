@@ -872,15 +872,10 @@ def get_event_insights(event_key='2022week0', t='playoff'):
 
 # Get all types of rankings
 def get_ranking(competition=False, year=False, event_key=False):
+    if competition:
+        return get_competition_ranking(year)
     if not event_key:
-        if not year:
-            return
-        if not competition:
-            return
-        try:
-            return get_competition_ranking(year)
-        except:
-            return 1
+        return 1
     else:
         try:
             return get_event_ranking(event_key)

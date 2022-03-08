@@ -216,8 +216,10 @@ class Ranking(Frame):
         print("Event ID:" + self.eventScrollable.eventID)
 
         print("Processing...")
-        get_ranking(self.competition, year, self.eventScrollable.eventID)  # TODO sal pls fix
-
+        
+        for i in get_ranking(self.competition, year, self.eventScrollable.eventID):  # TODO sal pls fix
+            print(i)
+            
         print("Done!")
 
     def updateCompetition(self, isComp):
@@ -290,12 +292,15 @@ class Matches(Frame):
             print("Competition is true")
         else:
             print("Competition is false")
+            
         print("Event ID:" + self.eventScrollable.eventID)
         print("Team: " + str(self.teamsScrollable.teamNumber))
 
         print("Processing...")
-        get_matches(self.teamsScrollable.teamNumber, self.competition, year, self.eventScrollable.eventID,
-                    not self.isAdvanced)
+        
+        for i in get_matches(self.teamsScrollable.teamNumber, self.competition, year, self.eventScrollable.eventID,
+                    not self.isAdvanced):
+            print(i)
 
         print("Done!")
 
