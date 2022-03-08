@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-'''
+"""
 This is the main GUI
 it will include multiple pages with a simple and usable interface
 these pages will include drop down menus and possibly search features in order to improve usability
@@ -23,13 +23,13 @@ Needs:
  - Credits
 
 Wants:
- - excel files
+ - Excel files
  - looks good
  - advanced options
  - viewing information from the application
  - searching for information from the application
- - most matches have a url for a media type object like an image or a video. A player for this media would be nice.
-'''
+ - most matches contain url for a media type object like an image or a video. A player for this media would be nice.
+"""
 
 __author__ = "Riley Carter"
 __credits__ = "Riley Carter"
@@ -38,7 +38,6 @@ __maintainer__ = "Riley Carter"
 __status__ = "Development"
 __version__ = "0.0.1"
 
-from ctypes import resize
 from datetime import datetime
 from TBAFunctions import *
 from tkinter import *
@@ -52,7 +51,7 @@ class StratUI(Tk):
     def __init__(self, *args, **kwargs):
         # init Tk
         Tk.__init__(self, *args, **kwargs)
-        self.geometry("400x400")
+        self.geometry("1000x600")
         self.title("StrategyAPI")
 
         # create container
@@ -104,7 +103,7 @@ class StratUI(Tk):
         # Tabs
         self.frames = {}
 
-        # initalize all tabs
+        # initialize all tabs
         for F in (StartPage, Ranking, Matches, EventInsight):  # order pages with init page first
             page = F(container, self)
 
@@ -123,6 +122,7 @@ class StratUI(Tk):
     def updateFrames(self):
         self.frames[Ranking].eventScrollable.updateEvents()
         self.frames[Matches].eventScrollable.updateEvents()
+
 
 class StartPage(Frame):
 
@@ -198,8 +198,13 @@ class Ranking(Frame):
         if self.competition:
             print("Competition is true")
         else:
-            print("competition is false")
+            print("Competition is false")
         print("Event ID:" + self.eventScrollable.eventID)
+
+        print("Processing...")
+        get_ranking(self.competition, year, self.eventScrollable.eventID)  # TODO sal pls fix
+
+        print("Done!")
 
     def updateCompetition(self, isComp):
         self.competition = isComp.get()
@@ -209,7 +214,6 @@ class Ranking(Frame):
 class Matches(Frame):
 
     def __init__(self, parent, controller):
-        self.eventID = int
         global year
         Frame.__init__(self, parent)
         self.grid(row=0, column=0, sticky='nsew')
@@ -220,7 +224,7 @@ class Matches(Frame):
         f.pack(side="top", fill="both", expand=True)
         f.grid_columnconfigure(0, weight=1)
         f.grid_columnconfigure(1, weight=1)
-        f.grid_columnconfigure(2, weight=1)
+        f.grid_columnconfigure(2, weight=0)
         f.grid_rowconfigure(0, weight=0)
         f.grid_rowconfigure(1, weight=1)
 
@@ -236,12 +240,22 @@ class Matches(Frame):
         # init scrollable teams list
         self.teamsScrollable = TeamsScrollable(f, self)
 
+        # options frame
+        
+
         # Competition Toggle
         self.competition = False
         isComp = BooleanVar()
         compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
                                 command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1, column=2, sticky='nw')
+        compCheck.grid(row=1, column=2, sticky='ne', padx=10, pady=10)
+
+        # Advanced Toggle
+        self.isAdvanced = False
+        isAdvancedVar = BooleanVar()
+        advCheck = Checkbutton(f, text="Advanced", variable=isAdvancedVar, onvalue=True, offvalue=False,
+                               command=lambda: self.update_isAdvanced(isAdvancedVar))
+        advCheck.grid(row=1, column=2, sticky='ne', padx=10, pady=10)  # TODO fix formatting, make a new frame :)
 
         Button(f,
                text="Run",
@@ -249,11 +263,29 @@ class Matches(Frame):
                ).grid(row=1, column=2, sticky="se", padx=10, pady=10)
 
     def runMatchInfo(self):
-        print('hello')
+        if self.isAdvanced:
+            print("Advanced is true")
+        else:
+            print("Advanced is false")
+
+        if self.competition:
+            print("Competition is true")
+        else:
+            print("Competition is false")
+        print("Event ID:" + self.eventScrollable.eventID)
+        print("Team: " + str(self.teamsScrollable.teamNumber))
+
+        print("Processing...")
+        get_matches(self.teamsScrollable.teamNumber, self.competition, year, self.eventScrollable.eventID,
+                    not self.isAdvanced)
+
+        print("Done!")
 
     def updateCompetition(self, isComp):
         self.competition = isComp.get()
 
+    def update_isAdvanced(self, isAdvancedVar):
+        self.isAdvanced = isAdvancedVar.get()
 
 
 # Event Insight
@@ -279,6 +311,9 @@ class EventInsight(Frame):
 
 class EventScrollable(Frame):
     def __init__(self, parent, controller):
+        self.eventButtons = None
+        self.eventID = None
+        self.lastClicked = None
         global year
         Frame.__init__(self, parent)
         # Event List
@@ -288,8 +323,7 @@ class EventScrollable(Frame):
         self.eventCanvasFrame.grid(row=1, column=0, sticky='nsew', padx=10, pady=10)
         self.eventCanvasFrame.grid_rowconfigure(0, weight=1)
         self.eventCanvasFrame.grid_columnconfigure(0, weight=1)
-        self.eventCanvasFrame.grid_columnconfigure(1, weight=1)
-
+        self.eventCanvasFrame.grid_columnconfigure(1, weight=0)
 
         # init canvas (for scroll bar)
         self.eventCanvas = Canvas(self.eventCanvasFrame)
@@ -324,7 +358,7 @@ class EventScrollable(Frame):
         # TODO update event
         # get events and names
         events = getEvents(year)
-        eventNames = list(events.keys())  # TODO sort
+        eventNames = list(events.keys())  # TODO sort alphabetically
 
         # event button list container
         self.eventButtons = []
@@ -332,12 +366,13 @@ class EventScrollable(Frame):
         # clear eventFrame
         for button in self.eventFrame.winfo_children():
             button.destroy()
+        self.lastClicked = None
 
         for i in range(len(eventNames)):
             button = Button(
                 self.eventFrame,
                 text=eventNames[i],
-                command=lambda i=i: self.setEventID(events[eventNames[i]], i)
+                command=lambda index=i: self.setEventID(events[eventNames[index]], index)
             )
             button.grid(row=i, column=0, sticky='w')
             self.eventButtons.append(button)
@@ -348,6 +383,9 @@ class EventScrollable(Frame):
 
 class TeamsScrollable(Frame):
     def __init__(self, parent, controller):
+        self.teamButtons = None
+        self.teamNumber = None
+        self.lastClicked = None
         global year
         Frame.__init__(self, parent)
         # Event List
@@ -356,9 +394,8 @@ class TeamsScrollable(Frame):
         self.teamCanvasFrame = Frame(parent)
         self.teamCanvasFrame.grid(row=1, column=1, sticky='nsew', padx=10, pady=10)
         self.teamCanvasFrame.grid_rowconfigure(0, weight=1)
-        self.teamCanvasFrame.grid_columnconfigure(1, weight=1)
-        self.teamCanvasFrame.grid_columnconfigure(2, weight=1)
-
+        self.teamCanvasFrame.grid_columnconfigure(0, weight=1)
+        self.teamCanvasFrame.grid_columnconfigure(1, weight=0)
 
         # init canvas (for scroll bar)
         self.teamCanvas = Canvas(self.teamCanvasFrame)
@@ -394,6 +431,9 @@ class TeamsScrollable(Frame):
         # get teams and names
         teams = COMPETITION_TEAMS
 
+        # reset buttons
+        self.lastClicked = None
+
         # teams button list container
         self.teamButtons = []
 
@@ -401,7 +441,7 @@ class TeamsScrollable(Frame):
             button = Button(
                 self.teamFrame,
                 text=str(teams[i]),
-                command=lambda i=i: self.setTeamNumber(teams[i], i)
+                command=lambda index=i: self.setTeamNumber(teams[index], index)
             )
             button.grid(row=i, column=0, sticky='w')
             self.teamButtons.append(button)
@@ -410,13 +450,14 @@ class TeamsScrollable(Frame):
         canvas.config(scrollregion=canvas.bbox("all"))
 
 
-
 def getValidYears():
     validYears = []
     for i in range(1991, datetime.today().year + 1):
         validYears.append(i)
     validYears.sort(reverse=True)
     return validYears
+
+
 # Data functions
 
 
