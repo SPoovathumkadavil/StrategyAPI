@@ -36,7 +36,7 @@ __credits__ = "Riley Carter"
 __license__ = "FRC4500"
 __maintainer__ = "Riley Carter"
 __status__ = "Development"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 from datetime import datetime
 from TBAFunctions import *
@@ -74,6 +74,7 @@ class StratUI(Tk):
         tabs.grid_columnconfigure(0, weight=1)
         tabs.grid_columnconfigure(1, weight=1)
         tabs.grid_columnconfigure(2, weight=1)
+        tabs.grid_columnconfigure(3, weight=1)
         tabs.grid_rowconfigure(0, weight=1)
 
         # Ranking tab
@@ -168,6 +169,7 @@ class Ranking(Frame):
         f.grid(row=0, column=0, sticky='nsew')
         f.pack(side="top", fill="both", expand=True)
         f.grid_columnconfigure(0, weight=1)
+        f.grid_columnconfigure(1, weight=0)
         f.grid_rowconfigure(0, weight=0)
         f.grid_rowconfigure(1, weight=1)
 
@@ -179,20 +181,32 @@ class Ranking(Frame):
         # init event Scrollable
         self.eventScrollable = EventScrollable(f, self)
 
+        # options frame
+        optFrame = Frame(f)
+        optFrame.grid(row=1, column=1, sticky='nse', padx=10, pady=10)
+        optFrame.grid_rowconfigure(0, weight=0)
+        optFrame.grid_rowconfigure(1, weight=1)
+        optFrame.grid_columnconfigure(0, weight=0)
+
         # Competition Toggle
         self.competition = False
         isComp = BooleanVar()
-        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+        compCheck = Checkbutton(optFrame, text="Competition", variable=isComp, onvalue=True, offvalue=False,
                                 command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1, column=1, sticky='nw')
+        compCheck.grid(row=0, column=0, sticky='nw')
 
-        # Simple toggle
+        # Advanced Toggle
+        self.isAdvanced = False
+        isAdvancedVar = BooleanVar()
+        advCheck = Checkbutton(optFrame, text="Advanced", variable=isAdvancedVar, onvalue=True, offvalue=False,
+                               command=lambda: self.update_isAdvanced(isAdvancedVar))
+        advCheck.grid(row=1, column=0, sticky='nw')
 
         # run button
-        Button(f,
+        Button(optFrame,
                text="Run",
                command=lambda: self.runRankingInfo()
-               ).grid(row=1, column=1, sticky="se", padx=10, pady=10)
+               ).grid(row=1, column=0, sticky="se")
 
     def runRankingInfo(self):
         if self.competition:
@@ -241,26 +255,30 @@ class Matches(Frame):
         self.teamsScrollable = TeamsScrollable(f, self)
 
         # options frame
-        
+        optFrame = Frame(f)
+        optFrame.grid(row=1, column=2, sticky='nse', padx=10, pady=10)
+        optFrame.grid_rowconfigure(0, weight=0)
+        optFrame.grid_rowconfigure(1,weight=1)
+        optFrame.grid_columnconfigure(0, weight=1)
 
         # Competition Toggle
         self.competition = False
         isComp = BooleanVar()
-        compCheck = Checkbutton(f, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+        compCheck = Checkbutton(optFrame, text="Competition", variable=isComp, onvalue=True, offvalue=False,
                                 command=lambda: self.updateCompetition(isComp))
-        compCheck.grid(row=1, column=2, sticky='ne', padx=10, pady=10)
+        compCheck.grid(row=0, column=0, sticky='nw')
 
         # Advanced Toggle
         self.isAdvanced = False
         isAdvancedVar = BooleanVar()
-        advCheck = Checkbutton(f, text="Advanced", variable=isAdvancedVar, onvalue=True, offvalue=False,
+        advCheck = Checkbutton(optFrame, text="Advanced", variable=isAdvancedVar, onvalue=True, offvalue=False,
                                command=lambda: self.update_isAdvanced(isAdvancedVar))
-        advCheck.grid(row=1, column=2, sticky='ne', padx=10, pady=10)  # TODO fix formatting, make a new frame :)
+        advCheck.grid(row=1, column=0, sticky='nw')
 
-        Button(f,
+        Button(optFrame,
                text="Run",
                command=lambda: self.runMatchInfo()
-               ).grid(row=1, column=2, sticky="se", padx=10, pady=10)
+               ).grid(row=1, column=0, sticky="se")
 
     def runMatchInfo(self):
         if self.isAdvanced:
@@ -292,21 +310,75 @@ class Matches(Frame):
 class EventInsight(Frame):
 
     def __init__(self, parent, controller):
+        self.eventID = int
+        global year
         Frame.__init__(self, parent)
+        self.grid(row=0, column=0, sticky='nsew')
 
+        # init frame
         f = Frame(self)
-        f.grid(row=0, column=0)
+        f.grid(row=0, column=0, sticky='nsew')
+        f.pack(side="top", fill="both", expand=True)
         f.grid_columnconfigure(0, weight=1)
-        f.grid_rowconfigure(0, weight=1)
-
-        # intro text for init tab
-        EventInsightText = "Event Insight Tab"
+        f.grid_rowconfigure(0, weight=0)
+        f.grid_rowconfigure(1, weight=1)
 
         # create label
-        Label(
-            self,
-            text=EventInsightText
-        ).grid(row=0, column=0, sticky='n')
+        Label(f,
+              text="Event Insight Page"
+              ).grid(row=0, columnspan=2, sticky='n')
+
+        # init event Scrollable
+        self.eventScrollable = EventScrollable(f, self)
+
+        # options frame
+        optFrame = Frame(f)
+        optFrame.grid(row=1, column=2, sticky='nse', padx=10, pady=10)
+        optFrame.grid_rowconfigure(0, weight=0)
+        optFrame.grid_rowconfigure(1, weight=1)
+        optFrame.grid_columnconfigure(0, weight=1)
+
+        # Competition Toggle
+        self.competition = False
+        isComp = BooleanVar()
+        compCheck = Checkbutton(optFrame, text="Competition", variable=isComp, onvalue=True, offvalue=False,
+                                command=lambda: self.updateCompetition(isComp))
+        compCheck.grid(row=0, column=0, sticky='nw')
+
+        # Advanced Toggle
+        self.isAdvanced = False
+        isAdvancedVar = BooleanVar()
+        advCheck = Checkbutton(optFrame, text="Advanced", variable=isAdvancedVar, onvalue=True, offvalue=False,
+                               command=lambda: self.update_isAdvanced(isAdvancedVar))
+        advCheck.grid(row=1, column=0, sticky='nw')
+
+        Button(optFrame,
+               text="Run",
+               command=lambda: self.runMatchInsight()
+               ).grid(row=1, column=0, sticky="se")
+
+    def runMatchInsight(self):
+        if self.isAdvanced:
+            print("Advanced is true")
+        else:
+            print("Advanced is false")
+
+        if self.competition:
+            print("Competition is true")
+        else:
+            print("Competition is false")
+        print("Event ID:" + self.eventScrollable.eventID)
+
+        print("Processing...")
+        # TODO sal pls fix
+
+        print("Done!")
+
+    def updateCompetition(self, isComp):
+        self.competition = isComp.get()
+
+    def update_isAdvanced(self, isAdvancedVar):
+        self.isAdvanced = isAdvancedVar.get()
 
 
 class EventScrollable(Frame):
