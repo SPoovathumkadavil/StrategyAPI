@@ -434,10 +434,9 @@ class EventScrollable(Frame):
 
     def updateEvents(self):
         global year
-        # TODO update event
         # get events and names
         events = getEvents(year)
-        eventNames = list(events.keys())  # TODO sort alphabetically
+        eventNames = sorted(list(events.keys()))
 
         # event button list container
         self.eventButtons = []
@@ -506,9 +505,8 @@ class TeamsScrollable(Frame):
 
     def updateTeams(self):
         global year
-        # TODO update event
         # get teams and names
-        teams = COMPETITION_TEAMS
+        teams = sorted(COMPETITION_TEAMS)
 
         # reset buttons
         self.lastClicked = None
