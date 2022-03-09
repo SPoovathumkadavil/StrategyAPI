@@ -15,6 +15,7 @@ import csv
 import tbapy
 import os
 import sys
+import platform
 
 COMPETITION_TEAMS = [
     111,
@@ -101,6 +102,9 @@ application_path = os.path.dirname(sys.executable)
 # initialize The Blue Alliance object
 tba = tbapy.TBA('import tbapy')
 tba = tbapy.TBA('TjUTfbPByPvqcFaMdEQVKPsd8R4m2TKIVHMoqf3Vya0kAdqx3DlwDQ5Sly4N2xJS')
+
+running_os = platform.system()
+print(running_os)
 
 
 '''
@@ -939,3 +943,4 @@ def getEvents(year):
     for event in events:
         eventNamesAndIDS[event['name']] = event['key']
     return eventNamesAndIDS
+
