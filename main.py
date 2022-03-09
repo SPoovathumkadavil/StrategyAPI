@@ -155,6 +155,11 @@ class StartPage(Frame):
             command=updateYear
         ).grid(row=1, column=0, sticky='n')
 
+        Label(
+            f,
+            text=application_path
+        ).grid(row=2, column=0, sticky='n')
+
 
 # Ranking Information
 class Ranking(Frame):
@@ -262,7 +267,7 @@ class Matches(Frame):
         optFrame = Frame(f)
         optFrame.grid(row=1, column=2, sticky='nse', padx=10, pady=10)
         optFrame.grid_rowconfigure(0, weight=0)
-        optFrame.grid_rowconfigure(1,weight=1)
+        optFrame.grid_rowconfigure(1, weight=1)
         optFrame.grid_columnconfigure(0, weight=1)
 
         # Competition Toggle
@@ -300,9 +305,12 @@ class Matches(Frame):
 
         print("Processing...")
 
-        for i in get_matches(self.teamsScrollable.teamNumber, self.competition, year, self.eventScrollable.eventID,
-                             not self.isAdvanced):
-            print(i)
+        self.matchInfo = get_matches(self.teamsScrollable.teamNumber,
+                                     self.competition,
+                                     year,
+                                     self.eventScrollable.eventID,
+                                     not self.isAdvanced
+                                     )
 
         print("Done!")
 
