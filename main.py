@@ -225,6 +225,8 @@ class Ranking(Frame):
     def updateCompetition(self, isComp):
         self.competition = isComp.get()
 
+    def update_isAdvanced(self, isAdvancedVar):
+        self.isAdvanced = isAdvancedVar.get()
 
 # Match information
 class Matches(Frame):
@@ -292,14 +294,14 @@ class Matches(Frame):
             print("Competition is true")
         else:
             print("Competition is false")
-            
+
         print("Event ID:" + self.eventScrollable.eventID)
         print("Team: " + str(self.teamsScrollable.teamNumber))
 
         print("Processing...")
-        
+
         for i in get_matches(self.teamsScrollable.teamNumber, self.competition, year, self.eventScrollable.eventID,
-                    not self.isAdvanced):
+                             not self.isAdvanced):
             print(i)
 
         print("Done!")
